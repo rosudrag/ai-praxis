@@ -4,6 +4,67 @@ Test-Driven Development is **mandatory** for all new features and bug fixes.
 
 ---
 
+## The True Nature of TDD: Hypothesis-Driven Development
+
+TDD is not about testing. **TDD is about thinking clearly before coding.**
+
+A test is a hypothesis expressed in code. When you write a test first, you're saying:
+
+> "I hypothesize that when [condition], the system should [behavior]."
+
+The test is your experiment. The implementation is your attempt to make the hypothesis true.
+
+### Why This Framing Matters
+
+Most developers learn TDD mechanically: "write test, make it pass, refactor." This misses the point. The power of TDD comes from **forcing clear thinking before coding**:
+
+```
+WITHOUT TDD (implementation-first):
+  "I'll write some code and see if it works"
+  → Vague understanding
+  → Code reflects confusion
+  → Tests written to match buggy code
+
+WITH TDD (hypothesis-first):
+  "I hypothesize the system should behave like THIS"
+  → Clear expectation documented as test
+  → Implementation guided by clear goal
+  → Test proves hypothesis correct
+```
+
+### The Hypothesis Protocol
+
+Before writing any test, state your hypothesis explicitly:
+
+```
+HYPOTHESIS: When [specific input/condition],
+            the system should [specific observable behavior].
+
+FALSIFICATION: The test fails if [specific failure condition].
+
+EXPERIMENT: [The test code that proves or disproves this]
+```
+
+**Example:**
+
+```
+HYPOTHESIS: When a user submits an order with no items,
+            the system should reject it with a 400 error.
+
+FALSIFICATION: The test fails if the API returns any status
+               other than 400, or if the error message doesn't
+               mention the empty items.
+
+EXPERIMENT:
+  POST /api/orders with { customerId: "123", items: [] }
+  Assert: status === 400
+  Assert: response.error contains "at least one item"
+```
+
+This explicit framing prevents the common mistake of writing tests that don't actually test anything meaningful.
+
+---
+
 ## Enforcement Protocol
 
 **THIS IS NON-NEGOTIABLE.** Claude MUST refuse to write implementation code until tests exist.
@@ -17,10 +78,17 @@ Before writing ANY implementation code, Claude MUST pass through this gate:
 │                         TDD GATE CHECK                              │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  [ ] 1. STATE the test I will write (describe expected behavior)   │
-│  [ ] 2. WRITE the test code (actual test, not pseudo-code)         │
-│  [ ] 3. SHOW it failing (run test, confirm RED state)              │
-│  [ ] 4. ONLY THEN implement the minimum code to pass               │
+│  [ ] 1. STATE THE HYPOTHESIS                                       │
+│        "I hypothesize that when [X], the system should [Y]"        │
+│                                                                     │
+│  [ ] 2. WRITE THE EXPERIMENT (the test)                            │
+│        Actual test code that proves/disproves the hypothesis       │
+│                                                                     │
+│  [ ] 3. RUN THE EXPERIMENT (confirm RED state)                     │
+│        Test must fail - proving hypothesis is not yet true         │
+│                                                                     │
+│  [ ] 4. MAKE THE HYPOTHESIS TRUE (implement)                       │
+│        Write minimum code to make the test pass                    │
 │                                                                     │
 │  ALL BOXES MUST BE CHECKED BEFORE IMPLEMENTATION BEGINS            │
 │                                                                     │
@@ -59,44 +127,66 @@ Before writing ANY implementation code, Claude MUST pass through this gate:
 ### Exact Scripts for Common Situations
 
 **When asked to implement without tests:**
-> "I need to write a failing test first. Here's the test I'll create:
+> "Before I implement, I need to form and test a hypothesis. Here's my hypothesis:
+>
+> **HYPOTHESIS:** When [specific condition], the system should [specific behavior].
+>
+> Here's the experiment (test) that will prove this hypothesis:
 >
 > [test code]
 >
-> Let me run this to confirm it fails, then I'll implement the solution."
+> Let me run this to confirm it fails (hypothesis not yet true), then I'll implement."
 
 **When asked to "just do it quickly" or "skip tests this time":**
-> "Our TDD requirement ensures quality and actually saves time by catching issues early. Writing the test first takes 2 minutes and prevents 20 minutes of debugging later. Here's the test I'll write:
+> "The test isn't extra work - it's how I clarify what needs to be built. Without stating the hypothesis first, I might build the wrong thing. Here's what I hypothesize you need:
+>
+> **HYPOTHESIS:** [clear statement of expected behavior]
+>
+> If this hypothesis is correct, here's the test that proves it:
 >
 > [test code]
 >
-> This test documents exactly what we expect. Once it's failing, I'll implement."
+> This takes 30 seconds and ensures we're building the right thing."
 
 **When the user says tests seem unnecessary for this change:**
-> "Even for this change, a test provides value: it documents the expected behavior, prevents regression, and serves as living documentation. Here's a minimal test that covers this:
+> "Even simple changes benefit from stating the hypothesis explicitly. Watch:
+>
+> **HYPOTHESIS:** When [condition], the system should [behavior].
+>
+> Is this hypothesis correct? If yes, this test documents it forever:
 >
 > [test code]
 >
-> This takes 30 seconds to write and protects this behavior forever."
+> If the hypothesis is wrong, we just saved ourselves from building the wrong thing."
 
 **When the user insists on skipping tests:**
-> "I understand the time pressure, but I'm not able to write implementation code without tests - it's a core requirement of this project. The good news is: the test I need to write is simple:
+> "I understand the pressure, but writing the test IS thinking through the problem. Without it, I'm guessing. Here's my hypothesis for what you need:
+>
+> **HYPOTHESIS:** [clear statement]
+>
+> Does this match your expectation? If yes:
 >
 > [test code]
 >
-> Let's run this, see it fail, then I'll implement. Total added time: under a minute."
+> Once this fails, I'll implement. Total time: under a minute, and we'll know it's right."
 
 **When fixing a bug:**
-> "Before I fix this bug, I need to write a test that reproduces it. This ensures:
-> 1. We understand the root cause
-> 2. The fix actually works
-> 3. This bug can never return silently
+> "Before I fix this bug, I need to understand it precisely. Here's my hypothesis:
 >
-> Here's the reproduction test:
+> **HYPOTHESIS:** The bug occurs when [specific condition], causing [specific wrong behavior]. The correct behavior should be [expected behavior].
+>
+> This test will prove the hypothesis (reproduce the bug):
 >
 > [test code]
 >
-> Let me run this to confirm it fails, then I'll fix it."
+> Once this fails, I'll know exactly what to fix. Then the same test proves the fix works."
+
+**When the hypothesis might be wrong:**
+> "I'm going to state my hypothesis, but I may be wrong. Please correct me:
+>
+> **HYPOTHESIS:** When [condition], you expect [behavior].
+>
+> If this is correct, I'll write the test. If not, let's refine the hypothesis before I write any code."
 
 ---
 
@@ -558,47 +648,62 @@ class TestCreateOrder:
 
 ---
 
-## The TDD Cycle
+## The TDD Cycle: Hypothesis → Experiment → Proof
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                                                         │
-│   ┌─────────┐     ┌─────────┐     ┌──────────┐        │
-│   │   RED   │────▶│  GREEN  │────▶│ REFACTOR │        │
-│   └─────────┘     └─────────┘     └──────────┘        │
-│        │                                   │           │
-│        └───────────────────────────────────┘           │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                                                                         │
+│   ┌─────────────┐     ┌─────────────┐     ┌─────────────┐             │
+│   │  HYPOTHESIS │────▶│  EXPERIMENT │────▶│    PROOF    │             │
+│   │    (RED)    │     │   (GREEN)   │     │ (REFACTOR)  │             │
+│   └─────────────┘     └─────────────┘     └─────────────┘             │
+│         │                                         │                    │
+│         └─────────────────────────────────────────┘                    │
+│                                                                         │
+│   The cycle continues: each new behavior needs a new hypothesis        │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1. RED - Write a Failing Test
+### 1. HYPOTHESIS (RED) - State What Should Be True
 
-**Before writing any implementation code**, write a test that:
-- Describes the expected behavior
-- Fails because the feature doesn't exist yet
-- Is specific and focused (one behavior per test)
+**Before writing any implementation code:**
+
+1. **State the hypothesis explicitly:**
+   > "I hypothesize that when [X], the system should [Y]"
+
+2. **Write the experiment (test) that would prove it:**
+   - One hypothesis per test
+   - Specific, observable, measurable outcome
+   - Clear failure condition
+
+3. **Run the experiment - it MUST fail:**
+   - Failure proves the hypothesis is not yet true
+   - If it passes, either the hypothesis is already true (feature exists) or your experiment is flawed
 
 ```
-# Run the test - it MUST fail
-# If it passes, your test is wrong or the feature already exists
+# The failing test is EVIDENCE that you understand the problem
+# If you can't write a failing test, you don't understand what you're building
 ```
 
-### 2. GREEN - Make It Pass
+### 2. EXPERIMENT (GREEN) - Make the Hypothesis True
 
 Write the **minimum code** necessary to make the test pass:
-- Don't over-engineer
+- Don't over-engineer - you're proving ONE hypothesis
 - Don't add features the test doesn't require
 - Don't worry about perfect code yet
 
 ```
 # Run the test - it should pass now
-# If it doesn't, fix the implementation (not the test)
+# If it doesn't, your implementation doesn't satisfy the hypothesis
+# Fix the implementation, not the test (the test IS the hypothesis)
 ```
 
-### 3. REFACTOR - Clean Up
+**Key insight:** The test defines what "correct" means. If your implementation passes the test, the hypothesis is proven. If you think the test is wrong, you need to refine your hypothesis, not hack the test.
 
-Now improve the code while keeping tests green:
+### 3. PROOF (REFACTOR) - Strengthen the Evidence
+
+Now improve the code while keeping the hypothesis proven (tests green):
 - Remove duplication
 - Improve naming
 - Simplify logic
@@ -606,8 +711,21 @@ Now improve the code while keeping tests green:
 
 ```
 # Run tests after each refactoring step
-# Tests must stay green throughout
+# Tests must stay green - the hypothesis must remain proven
+# If tests fail, you've broken the proof - revert and try again
 ```
+
+### The Scientific Method Applied
+
+| Scientific Method | TDD Equivalent |
+|-------------------|----------------|
+| Observe phenomenon | Understand the requirement |
+| Form hypothesis | "When X, the system should Y" |
+| Design experiment | Write the test |
+| Run experiment | Run the test (should fail) |
+| Analyze results | Failure confirms hypothesis is testable |
+| Implement theory | Write code to pass the test |
+| Verify reproducibility | Run test suite, refactor, tests stay green |
 
 ## Test Structure
 
@@ -633,76 +751,176 @@ Assert:  Verify the expected outcome
 - Trivial code (simple getters/setters)
 - External services (mock them)
 
-## Test Naming
+## Test Naming = Hypothesis Naming
 
-Name tests to describe behavior, not implementation:
+Test names should read as hypotheses about system behavior:
 
-**Good:**
+**Good (reads as hypothesis):**
 ```
 test_user_cannot_withdraw_more_than_balance
+  → Hypothesis: A user cannot withdraw more than their balance
+
 test_order_total_includes_tax_when_applicable
+  → Hypothesis: Order totals include tax when tax is applicable
+
 test_expired_token_returns_unauthorized
+  → Hypothesis: An expired token causes an unauthorized response
 ```
 
-**Bad:**
+**Bad (describes implementation, not hypothesis):**
 ```
-test_withdraw_method
-test_calculate_total
-test_validate_token
+test_withdraw_method      → What about it? What's the hypothesis?
+test_calculate_total      → Calculate total what? When? What result?
+test_validate_token       → Validation does what, exactly?
 ```
 
-## Bug Fix Protocol
+**The test name IS the hypothesis.** If you can't state the hypothesis clearly in the name, you don't understand what you're testing.
 
-When fixing a bug:
+## Bug Fix Protocol: Hypothesis About What's Broken
 
-1. **Write a test that reproduces the bug** (RED)
-   - The test should fail, proving the bug exists
+When fixing a bug, you must form a hypothesis about the bug before fixing it:
 
-2. **Fix the bug** (GREEN)
-   - Make the minimal change to pass the test
+### 1. Form the Bug Hypothesis
 
-3. **Verify no regression** (REFACTOR)
-   - Run full test suite
-   - Check related functionality
+```
+BUG HYPOTHESIS:
+  OBSERVED: [What actually happens - the symptom]
+  EXPECTED: [What should happen instead]
+  CAUSE: I hypothesize this happens because [specific cause]
+  PROOF: This test will prove the bug exists:
+```
 
-This ensures:
-- The bug is documented
-- It can't reappear silently
-- You understand the root cause
+### 2. Write the Reproduction Test (RED)
+
+Write a test that:
+- Fails because of the bug (proving the bug exists)
+- Will pass once the bug is fixed
+- Documents exactly what the correct behavior should be
+
+```
+# If this test passes before you fix anything, your hypothesis is wrong
+# Either the bug doesn't exist or you misunderstood it
+```
+
+### 3. Fix the Bug (GREEN)
+
+Make the **minimal change** to pass the test:
+- Don't fix things the test doesn't cover
+- Don't refactor while fixing
+- Focus only on proving your hypothesis correct
+
+### 4. Verify the Hypothesis (REFACTOR)
+
+- Run full test suite - no regressions
+- Consider: does this fix reveal other related bugs?
+- If yes, form new hypotheses for those bugs
+
+**Why this matters:**
+- The bug hypothesis forces you to understand root cause
+- The test proves you understood correctly
+- The test prevents the bug from ever returning silently
+
+### Example
+
+```
+BUG HYPOTHESIS:
+  OBSERVED: Users can place orders with negative quantities
+  EXPECTED: Orders with negative quantities should be rejected
+  CAUSE: The quantity validation only checks for zero, not negative
+  PROOF: test_order_rejects_negative_quantity will fail
+
+TEST:
+  def test_order_rejects_negative_quantity():
+      order = Order(item="widget", quantity=-5)
+      with pytest.raises(ValidationError, match="positive"):
+          order.validate()
+
+FIX:
+  - if quantity == 0:
+  + if quantity <= 0:
+      raise ValidationError("Quantity must be positive")
+```
+
+---
+
+## Multiple Hypotheses: When Requirements Are Complex
+
+For complex features, you'll have multiple hypotheses to test. State them all upfront:
+
+```
+FEATURE: User authentication
+
+HYPOTHESIS 1: Valid credentials return an auth token
+HYPOTHESIS 2: Invalid password returns 401 Unauthorized
+HYPOTHESIS 3: Unknown user returns 401 Unauthorized (not 404, to prevent enumeration)
+HYPOTHESIS 4: Token expires after configured timeout
+HYPOTHESIS 5: Expired token returns 401 Unauthorized
+HYPOTHESIS 6: Malformed token returns 400 Bad Request
+```
+
+Then work through them one at a time:
+1. Write test for Hypothesis 1
+2. Run test (fails)
+3. Implement until it passes
+4. Write test for Hypothesis 2
+5. Run test (fails)
+6. Implement until it passes
+7. ...continue...
+
+**Never implement multiple hypotheses at once.** Each hypothesis gets its own RED-GREEN-REFACTOR cycle.
+
+This prevents the common mistake of writing all the code first and then writing tests to match what you built (which isn't TDD - it's testing-after).
 
 ## Test Quality Checklist
 
 Before considering a test complete:
 
-- [ ] Test fails without the implementation
-- [ ] Test passes with the implementation
-- [ ] Test name describes the behavior
-- [ ] Test is independent (no shared state)
-- [ ] Test is fast (< 100ms for unit tests)
-- [ ] Test has clear arrange/act/assert sections
-- [ ] Edge cases are covered
+- [ ] **Hypothesis is clear** - Can state "When X, system should Y"
+- [ ] **Test fails without implementation** - Hypothesis not yet proven
+- [ ] **Test passes with implementation** - Hypothesis proven
+- [ ] **Test name states the hypothesis** - Readable as a claim
+- [ ] **Test is independent** - No shared state with other tests
+- [ ] **Test is fast** - < 100ms for unit tests
+- [ ] **Arrange/Act/Assert is clear** - Setup, execution, verification
+- [ ] **Edge cases covered** - Additional hypotheses for boundaries
 
-## Common Mistakes
+## Common Mistakes (Hypothesis Framing)
 
-### 1. Writing Implementation First
-❌ "I'll write tests after the code works"
-✅ Write the test FIRST, then make it pass
+### 1. Coding Without a Hypothesis
+❌ "I'll write some code and see if it works"
+✅ "I hypothesize that when X happens, Y should result. Let me write a test to prove it."
 
-### 2. Testing Too Much at Once
-❌ One test covering multiple behaviors
-✅ One focused test per behavior
+### 2. Testing Implementation, Not Hypothesis
+❌ "Test that processOrder calls saveToDatabase"
+✅ "Test that a valid order is persisted and retrievable"
 
-### 3. Testing Implementation Details
-❌ Testing that a specific private method was called
-✅ Testing the observable behavior/output
+The first tests implementation details. The second tests observable behavior.
 
-### 4. Ignoring Failing Tests
-❌ Commenting out or skipping failing tests
-✅ Fix the code or update the test (with good reason)
+### 3. Multiple Hypotheses Per Test
+❌ One test that checks login, validates token, AND verifies permissions
+✅ Three separate tests, each proving one hypothesis
 
-### 5. Not Running Tests Frequently
-❌ Writing lots of code, then running tests
-✅ Run tests after every small change
+### 4. Vague Hypotheses
+❌ "Test that the system works correctly"
+✅ "Test that users with expired subscriptions cannot access premium content"
+
+### 5. Writing Tests to Match Existing Code
+❌ Code first, then write tests that pass against current behavior
+✅ Hypothesis first, then test that fails, then code that passes
+
+The first approach encodes bugs as expected behavior. The second proves correctness.
+
+### 6. Abandoning Failing Tests
+❌ "This test fails, let me comment it out"
+✅ "This test fails, so either my hypothesis is wrong or my implementation is wrong. Let me figure out which."
+
+A failing test is information. A skipped test is ignorance.
+
+### 7. Not Running Tests During Development
+❌ Write 200 lines of code, then run tests
+✅ Write test, run (fails), write 5 lines, run (passes), refactor, run (still passes)
+
+Each test run is an experiment. Run experiments frequently.
 
 ## When To Skip TDD
 
@@ -720,7 +938,45 @@ All tests must pass before:
 - Deploying to any environment
 - Considering a task "done"
 
+## Quick Reference: The Hypothesis-Driven TDD Protocol
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     TDD = HYPOTHESIS-DRIVEN DEVELOPMENT                 │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  1. STATE THE HYPOTHESIS                                               │
+│     "I hypothesize that when [condition], the system should [behavior]"│
+│                                                                         │
+│  2. DESIGN THE EXPERIMENT                                              │
+│     Write a test that proves or disproves the hypothesis               │
+│                                                                         │
+│  3. RUN THE EXPERIMENT                                                 │
+│     Test must FAIL (hypothesis not yet true)                           │
+│                                                                         │
+│  4. MAKE HYPOTHESIS TRUE                                               │
+│     Write minimum code to pass the test                                │
+│                                                                         │
+│  5. VERIFY & STRENGTHEN                                                │
+│     Refactor while keeping tests green                                 │
+│                                                                         │
+│  6. REPEAT                                                             │
+│     Next hypothesis, next test, next implementation                    │
+│                                                                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│  REMEMBER: The test IS the hypothesis. The code IS the proof.          │
+│            If you can't write a failing test, you don't understand     │
+│            what you're building.                                       │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Related Guides
+
+- [Iterative Problem Solving](iterative-problem-solving.md) - Systematic hypothesis-based debugging
+- [Multi-Approach Validation](multi-approach-validation.md) - Testing multiple implementation approaches
+
 ## Further Reading
 
 - [Test-Driven Development by Example](https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530) - Kent Beck
 - [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/) - Freeman & Pryce
+- [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/) - Hunt & Thomas (on tracer bullets and prototypes)

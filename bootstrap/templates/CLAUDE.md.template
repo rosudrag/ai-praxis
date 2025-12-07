@@ -149,48 +149,74 @@ Code documentation: **{{discovery.patterns.documentation}}**
 
 | Document | Purpose |
 |----------|---------|
-| [TDD Enforcement](claude-docs/tdd-enforcement.md) | Test-driven development workflow |
+| [TDD Enforcement](claude-docs/tdd-enforcement.md) | Hypothesis-driven test-first development |
 | [Code Quality](claude-docs/code-quality.md) | Coding standards and principles |
 | [Security Guardrails](claude-docs/security.md) | Security requirements and patterns |
+| [Iterative Problem Solving](claude-docs/iterative-problem-solving.md) | Systematic debugging methodology |
+| [Multi-Approach Validation](claude-docs/multi-approach-validation.md) | Evaluating multiple solutions |
 | [Research Workflow](claude-docs/research-workflow.md) | When and how to investigate |
 | [ADRs](docs/adrs/README.md) | Architecture decisions |
 
 ## Core Principles
 
-### 1. Test-Driven Development
-Write tests FIRST. Follow RED -> GREEN -> REFACTOR.
+### 1. Hypothesis-Driven Development
+A test is a hypothesis. Write the hypothesis (test) FIRST, then prove it (implement).
 See [TDD Enforcement](claude-docs/tdd-enforcement.md).
 
-### 2. Research Before Assuming
-When uncertain, investigate first.
+### 2. Systematic Problem Solving
+Don't guess at solutions. Form hypotheses, test systematically, refine based on evidence.
+See [Iterative Problem Solving](claude-docs/iterative-problem-solving.md).
+
+### 3. Validate Multiple Approaches
+When uncertain, enumerate approaches and test the simplest first.
+See [Multi-Approach Validation](claude-docs/multi-approach-validation.md).
+
+### 4. Research Before Assuming
+When uncertain about facts, investigate first.
 See [Research Workflow](claude-docs/research-workflow.md).
 
-### 3. Self-Documenting Code
+### 5. Self-Documenting Code
 Code should be clear without comments. Comments explain "why", not "what".
 See [Code Quality](claude-docs/code-quality.md).
 
-### 4. Security First
+### 6. Security First
 Never hardcode secrets. Validate all input.
 See [Security Guardrails](claude-docs/security.md).
 
-### 5. Document Decisions
+### 7. Document Decisions
 Architectural decisions go in ADRs.
 See [docs/adrs/](docs/adrs/README.md).
 
 ## Common Tasks
 
 ### Adding a New Feature
-1. Write failing tests first
-2. Implement minimum code to pass
-3. Refactor for quality
-4. Update documentation
-5. Create ADR if architecturally significant
+1. State the hypothesis: "When X, the system should Y"
+2. Write a failing test (the experiment)
+3. Implement minimum code to pass (prove the hypothesis)
+4. Refactor for quality
+5. Update documentation
+6. Create ADR if architecturally significant
 
 ### Fixing a Bug
-1. Write a test that reproduces the bug
-2. Fix the bug
-3. Verify test passes
-4. Check for similar issues
+1. Form a bug hypothesis: "The bug occurs because..."
+2. Write a test that reproduces the bug (proves hypothesis)
+3. Fix the bug (minimum change to pass the test)
+4. Verify test passes
+5. Check for similar issues
+
+### When Stuck on a Problem
+1. Form 2-3 hypotheses about the cause
+2. Test simplest hypothesis first
+3. Gather concrete evidence (logs, diffs, test output)
+4. Refine and retry until solved
+See [Iterative Problem Solving](claude-docs/iterative-problem-solving.md).
+
+### Complex Implementation Decisions
+1. Enumerate 2-3 valid approaches
+2. Analyze trade-offs
+3. Implement simplest first
+4. Compare results if multiple approaches work
+See [Multi-Approach Validation](claude-docs/multi-approach-validation.md).
 
 ### Investigating Unknowns
 1. Check existing documentation

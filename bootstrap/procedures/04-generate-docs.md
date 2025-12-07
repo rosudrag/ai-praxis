@@ -16,6 +16,8 @@ Create these files in `claude-docs/`:
 | `code-quality.md` | Code standards and principles | [templates/guides/code-quality.md](../templates/guides/code-quality.md) |
 | `security.md` | Security practices and guidelines | [templates/guides/security.md](../templates/guides/security.md) |
 | `research-workflow.md` | When/how to investigate unknowns | [templates/guides/research-workflow.md](../templates/guides/research-workflow.md) |
+| `iterative-problem-solving.md` | Systematic debugging methodology | [templates/guides/iterative-problem-solving.md](../templates/guides/iterative-problem-solving.md) |
+| `multi-approach-validation.md` | Evaluating multiple solutions | [templates/guides/multi-approach-validation.md](../templates/guides/multi-approach-validation.md) |
 
 ## Steps
 
@@ -81,7 +83,31 @@ When uncertain about implementation details...
 
 See [templates/guides/research-workflow.md](../templates/guides/research-workflow.md).
 
-### 7. Create Index [AUTO]
+### 7. Generate Iterative Problem Solving Guide [AUTO if missing]
+
+Copy from template:
+
+```markdown
+# Iterative Problem Solving Guide
+
+A structured approach to solving complex problems through hypothesis formation, testing, and refinement.
+```
+
+See [templates/guides/iterative-problem-solving.md](../templates/guides/iterative-problem-solving.md).
+
+### 8. Generate Multi-Approach Validation Guide [AUTO if missing]
+
+Copy from template:
+
+```markdown
+# Multi-Approach Validation Guide
+
+When the solution isn't obvious, explore multiple approaches before committing to one.
+```
+
+See [templates/guides/multi-approach-validation.md](../templates/guides/multi-approach-validation.md).
+
+### 9. Create Index [AUTO]
 
 Create `claude-docs/README.md`:
 
@@ -92,9 +118,14 @@ Supporting guides for AI-assisted development.
 
 ## Available Guides
 
-- [TDD Enforcement](tdd-enforcement.md) - Test-driven development workflow
+### Core Practices
+- [TDD Enforcement](tdd-enforcement.md) - Hypothesis-driven test-first development
 - [Code Quality](code-quality.md) - Coding standards and principles
 - [Security](security.md) - Security practices and guidelines
+
+### Problem Solving
+- [Iterative Problem Solving](iterative-problem-solving.md) - Systematic debugging methodology
+- [Multi-Approach Validation](multi-approach-validation.md) - Evaluating multiple solutions
 - [Research Workflow](research-workflow.md) - How to investigate unknowns
 
 ## Adding Custom Guides
@@ -104,7 +135,7 @@ Add any project-specific guides to this directory and reference them in the root
 
 If `claude-docs/README.md` already exists, skip it (preserve user's index).
 
-### 8. Log Completion [AUTO]
+### 10. Log Completion [AUTO]
 
 Log what was created:
 
@@ -113,6 +144,8 @@ Log what was created:
 > - `code-quality.md` - {{created/skipped}}
 > - `security.md` - {{created/skipped}}
 > - `research-workflow.md` - {{created/skipped}}
+> - `iterative-problem-solving.md` - {{created/skipped}}
+> - `multi-approach-validation.md` - {{created/skipped}}
 > - `README.md` - {{created/skipped}}
 >
 > Customize these guides for your project's specific needs."
@@ -158,7 +191,8 @@ If disk full error occurs:
 Before proceeding to the next step, verify:
 
 - [ ] `claude-docs/` directory exists
-- [ ] For each guide: either created new or existing file preserved
+- [ ] Core guides present: `tdd-enforcement.md`, `code-quality.md`, `security.md`
+- [ ] Problem-solving guides present: `iterative-problem-solving.md`, `multi-approach-validation.md`, `research-workflow.md`
 - [ ] `claude-docs/README.md` exists
 - [ ] Manifest updated with docs generation status
 
