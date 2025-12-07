@@ -1,4 +1,4 @@
-# Claude Guardrails Bootstrap - Development Instructions
+# Claude Praxis - Development Instructions
 
 This file contains instructions for developing and improving THIS repository itself.
 
@@ -6,12 +6,12 @@ This file contains instructions for developing and improving THIS repository its
 
 ## Project Purpose
 
-This repository is a **meta-instruction set** for Claude Code. When users point Claude at this repo, it reads the instructions in `/bootstrap` and uses them to set up guardrails in the user's own project.
+This repository is a **comprehensive methodology system** for Claude Code. When users point Claude at this repo, it reads the instructions in `/bootstrap` and uses them to set up the praxis system in the user's own project.
 
 ## Repository Structure
 
 ```
-claude-guardrails-bootstrap/
+claude-praxis/
 ├── CLAUDE.md                    # You are here (meta instructions)
 ├── README.md                    # Human documentation
 └── bootstrap/

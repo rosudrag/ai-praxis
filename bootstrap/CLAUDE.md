@@ -1,10 +1,10 @@
-# Claude Guardrails Bootstrap - Execution Instructions
+# Claude Praxis - Execution Instructions
 
-You are reading this because a user has asked you to bootstrap their project with AI guardrails.
+You are reading this because a user has asked you to bootstrap their project with Claude Praxis.
 
 ## Your Mission
 
-Transform the user's project into an AI-friendly codebase by:
+Transform the user's project into a praxis-enabled codebase by:
 1. Installing semantic code tools (Serena MCP)
 2. Installing specialized agents for their tech stack
 3. Generating customized CLAUDE.md and supporting docs

@@ -130,7 +130,7 @@ After Serena initializes, create a bootstrap memory using Serena's memory tools:
 ```markdown
 # Bootstrap Information
 
-Bootstrapped on {{date}} using claude-guardrails-bootstrap.
+Bootstrapped on {{date}} using Claude Praxis.
 
 ## Project Analysis Results
 - **Project Type**: {{project_type}}
