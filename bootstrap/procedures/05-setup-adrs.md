@@ -21,11 +21,10 @@ Look for existing ADR structures:
 - `adr/`
 - `ADR/`
 
-If found, ask user how to proceed:
-
-> "I found existing ADRs at `{{path}}`. Should I:
-> 1. **Add template** - Add the ADR template to your existing structure
-> 2. **Skip** - Leave your ADR structure unchanged"
+If found:
+- Add the ADR template to the existing structure (if template missing)
+- Skip creating new directory structure
+- Preserve all existing content
 
 ### 2. Create ADR Directory [AUTO if not exists]
 
@@ -33,9 +32,9 @@ If found, ask user how to proceed:
 mkdir -p docs/adrs
 ```
 
-### 3. Create ADR README [AUTO]
+### 3. Create ADR README [AUTO if not exists]
 
-Create `docs/adrs/README.md`:
+Create `docs/adrs/README.md` (skip if already exists):
 
 ```markdown
 # Architecture Decision Records
@@ -70,9 +69,9 @@ An ADR documents a significant architectural decision:
 - **Superseded** - Replaced by another ADR
 ```
 
-### 4. Create ADR Template [AUTO]
+### 4. Create ADR Template [AUTO if not exists]
 
-Create `docs/adrs/000-template.md`:
+Create `docs/adrs/000-template.md` (skip if already exists):
 
 ```markdown
 # ADR-NNN: Title
@@ -116,29 +115,15 @@ What other options were considered? Why were they rejected?
 - Links to relevant documentation, discussions, or external resources
 ```
 
-### 5. Create Initial ADRs [INTERACTIVE]
+### 5. Log Completion [AUTO]
 
-Ask user:
+Log what was created:
 
-> "Would you like me to create any initial ADRs for your project? Common starting points:
-> - [ ] ADR-001: Technology Stack (document current choices)
-> - [ ] ADR-002: Project Structure (document directory organization)
-> - [ ] ADR-003: Testing Strategy (document testing approach)
+> "ADR structure set up at `docs/adrs/`:
+> - `README.md` - Index and instructions {{created/skipped}}
+> - `000-template.md` - Template for new ADRs {{created/skipped}}
 >
-> You can also create these later using the template."
-
-If user wants initial ADRs, create them with basic structure filled in based on project analysis.
-
-### 6. Report to User [CONFIRM]
-
-> "I've set up the ADR structure at `docs/adrs/`:
-> - `README.md` - Index and instructions
-> - `000-template.md` - Template for new ADRs
-> {{#if initial_adrs}}
-> - Initial ADRs: {{list}}
-> {{/if}}
->
-> Use ADRs to document significant architectural decisions. They help me understand your project's constraints and conventions."
+> Use ADRs to document significant architectural decisions."
 
 ## Best Practices for ADRs
 
@@ -149,9 +134,42 @@ Include these tips in the README or mention to user:
 3. **Link from code** - Reference ADR numbers in code comments for context
 4. **Review periodically** - Mark outdated ADRs as deprecated
 
+## Error Handling
+
+### Cannot Create Directory
+
+If directory creation fails:
+1. Log error with details
+2. Record in manifest: `"adrs": { "skipped": true, "reason": "directory_creation_failed" }`
+3. Continue with next procedure
+
+### Cannot Write Files
+
+If file writes fail:
+1. Log which files succeeded and which failed
+2. Record partial progress in manifest
+3. Continue with next procedure
+
+### Existing Structure Uses Different Convention
+
+If existing ADRs use different naming (e.g., `ADR-001` vs `001-`):
+1. Adapt template filename to match existing convention
+2. Preserve existing structure
+3. Log the detected convention
+
 ## Output
 
-- Creates `docs/adrs/` directory
-- Creates `README.md` with index
-- Creates `000-template.md`
-- Optionally creates initial ADRs
+- Creates `docs/adrs/` directory (if not exists)
+- Creates `README.md` with index (if not exists)
+- Creates `000-template.md` (if not exists)
+
+## Self-Verification Checklist
+
+Before proceeding to the next step, verify:
+
+- [ ] ADR directory exists (new or pre-existing)
+- [ ] `README.md` exists in ADR directory
+- [ ] Template file exists in ADR directory
+- [ ] Manifest updated with ADR setup status
+
+Proceed to next step regardless of which files were created vs skipped.

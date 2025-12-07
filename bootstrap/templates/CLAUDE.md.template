@@ -8,9 +8,142 @@
 **Primary Language**: {{primary_language}}
 **Frameworks**: {{frameworks}}
 
-<!-- USER_SECTION_START: Project Description -->
-Describe your project here. What does it do? Who is it for?
-<!-- USER_SECTION_END -->
+{{#if discovery.project_purpose.value}}
+{{discovery.project_purpose.value}}
+{{else}}
+<!-- PROJECT_DESCRIPTION_START -->
+<!-- Could not auto-detect. Please describe: What does this project do? Who uses it? -->
+<!-- PROJECT_DESCRIPTION_END -->
+{{/if}}
+
+## Quick Reference
+
+### Build Commands
+
+{{#if discovery.commands.build.value}}
+```bash
+{{discovery.commands.build.value}}
+```
+{{else}}
+<!-- BUILD_COMMANDS_START -->
+```bash
+# Build command not detected. Add here:
+```
+<!-- BUILD_COMMANDS_END -->
+{{/if}}
+
+### Test Commands
+
+{{#if discovery.commands.test.value}}
+```bash
+{{discovery.commands.test.value}}
+```
+{{else}}
+<!-- TEST_COMMANDS_START -->
+```bash
+# Test command not detected. Add here:
+```
+<!-- TEST_COMMANDS_END -->
+{{/if}}
+
+{{#if discovery.commands.lint.value}}
+### Lint Commands
+
+```bash
+{{discovery.commands.lint.value}}
+```
+{{/if}}
+
+{{#if discovery.commands.dev.value}}
+### Development Server
+
+```bash
+{{discovery.commands.dev.value}}
+```
+{{/if}}
+
+## Navigation Guide
+
+### Key Locations
+
+| Looking for... | Location |
+|----------------|----------|
+| Entry point | {{#if discovery.key_paths.entry_point.value}}`{{discovery.key_paths.entry_point.value}}`{{else}}_Not detected_{{/if}} |
+| Business logic | {{#if discovery.key_paths.business_logic.value}}`{{discovery.key_paths.business_logic.value}}`{{else}}_Not detected_{{/if}} |
+| Tests | {{#if discovery.key_paths.tests.value}}`{{discovery.key_paths.tests.value}}`{{else}}_Not detected_{{/if}} |
+| Configuration | {{#if discovery.key_paths.config.value}}`{{discovery.key_paths.config.value}}`{{else}}_Not detected_{{/if}} |
+
+{{#unless discovery.key_paths.entry_point.value}}
+<!-- KEY_PATHS_START -->
+<!-- Some paths could not be detected. Please fill in the missing locations above. -->
+<!-- KEY_PATHS_END -->
+{{/unless}}
+
+### Directory Structure
+
+```
+{{project_name}}/
+{{#if discovery.key_paths.entry_point.value}}├── {{discovery.key_paths.entry_point.value}}  # Entry point
+{{/if}}{{#if discovery.key_paths.business_logic.value}}├── {{discovery.key_paths.business_logic.value}}  # Business logic
+{{/if}}{{#if discovery.key_paths.tests.value}}├── {{discovery.key_paths.tests.value}}  # Tests
+{{/if}}├── docs/          # Documentation
+│   └── adrs/      # Architecture Decision Records
+└── claude-docs/   # AI assistant guides
+```
+
+## Coding Standards
+
+{{#if discovery.conventions.linter}}
+### Linting & Formatting
+
+- **Linter**: {{discovery.conventions.linter}}
+{{#if discovery.conventions.formatter}}- **Formatter**: {{discovery.conventions.formatter}}{{/if}}
+{{#if discovery.conventions.quote_style}}- **Quotes**: {{discovery.conventions.quote_style}}{{/if}}
+{{#if discovery.conventions.semicolons}}- **Semicolons**: {{#if discovery.conventions.semicolons}}Yes{{else}}No{{/if}}{{/if}}
+{{#if discovery.conventions.indent}}- **Indentation**: {{discovery.conventions.indent}}{{/if}}
+{{/if}}
+
+{{#if discovery.conventions.naming_style}}
+### Naming Conventions
+
+{{discovery.conventions.naming_style}}
+{{/if}}
+
+{{#if discovery.conventions.import_order}}
+### Import Organization
+
+{{discovery.conventions.import_order}}
+{{/if}}
+
+<!-- CODING_STANDARDS_START -->
+<!-- Add any additional coding standards not captured above: -->
+<!-- CODING_STANDARDS_END -->
+
+## Project Patterns
+
+{{#if discovery.patterns.error_handling}}
+### Error Handling
+
+This project uses: **{{discovery.patterns.error_handling}}**
+{{/if}}
+
+{{#if discovery.patterns.logging}}
+### Logging
+
+Logging approach: **{{discovery.patterns.logging}}**
+{{/if}}
+
+{{#if discovery.patterns.testing}}
+### Testing Style
+
+Testing pattern: **{{discovery.patterns.testing}}**
+{{/if}}
+
+{{#if discovery.patterns.documentation}}
+### Documentation Style
+
+Code documentation: **{{discovery.patterns.documentation}}**
+{{/if}}
 
 ## Documentation Index
 
@@ -18,109 +151,52 @@ Describe your project here. What does it do? Who is it for?
 |----------|---------|
 | [TDD Enforcement](claude-docs/tdd-enforcement.md) | Test-driven development workflow |
 | [Code Quality](claude-docs/code-quality.md) | Coding standards and principles |
+| [Security Guardrails](claude-docs/security.md) | Security requirements and patterns |
 | [Research Workflow](claude-docs/research-workflow.md) | When and how to investigate |
 | [ADRs](docs/adrs/README.md) | Architecture decisions |
 
-## Quick Reference
-
-### Build Commands
-
-<!-- USER_SECTION_START: Build Commands -->
-```bash
-# Add your build commands here
-# npm run build
-# dotnet build
-# cargo build
-```
-<!-- USER_SECTION_END -->
-
-### Test Commands
-
-<!-- USER_SECTION_START: Test Commands -->
-```bash
-# Add your test commands here
-# npm test
-# dotnet test
-# cargo test
-```
-<!-- USER_SECTION_END -->
-
 ## Core Principles
 
-These principles guide all development work:
-
 ### 1. Test-Driven Development
-Write tests FIRST. Follow RED → GREEN → REFACTOR.
-See [TDD Enforcement](claude-docs/tdd-enforcement.md) for the full workflow.
+Write tests FIRST. Follow RED -> GREEN -> REFACTOR.
+See [TDD Enforcement](claude-docs/tdd-enforcement.md).
 
 ### 2. Research Before Assuming
-When uncertain about implementation details, investigate first.
+When uncertain, investigate first.
 See [Research Workflow](claude-docs/research-workflow.md).
 
 ### 3. Self-Documenting Code
-Code should be clear without comments. Use meaningful names.
-Comments explain "why", not "what".
+Code should be clear without comments. Comments explain "why", not "what".
 See [Code Quality](claude-docs/code-quality.md).
 
-### 4. Document Decisions
-Significant architectural decisions go in ADRs.
+### 4. Security First
+Never hardcode secrets. Validate all input.
+See [Security Guardrails](claude-docs/security.md).
+
+### 5. Document Decisions
+Architectural decisions go in ADRs.
 See [docs/adrs/](docs/adrs/README.md).
-
-## Navigation Guide
-
-### Key Directories
-
-<!-- USER_SECTION_START: Directory Guide -->
-```
-{{project_name}}/
-├── src/           # Source code
-├── tests/         # Test files
-├── docs/          # Documentation
-│   └── adrs/      # Architecture Decision Records
-└── claude-docs/   # AI assistant guides
-```
-<!-- USER_SECTION_END -->
-
-### Finding Things
-
-| Looking for... | Look in... |
-|----------------|------------|
-| Entry point | <!-- USER: Add path --> |
-| Business logic | <!-- USER: Add path --> |
-| Tests | <!-- USER: Add path --> |
-| Configuration | <!-- USER: Add path --> |
-
-## Coding Standards
-
-<!-- USER_SECTION_START: Coding Standards -->
-Add project-specific coding standards here:
-- Naming conventions
-- File organization rules
-- Import ordering
-- etc.
-<!-- USER_SECTION_END -->
 
 ## Common Tasks
 
 ### Adding a New Feature
-1. Write failing tests first (see TDD guide)
+1. Write failing tests first
 2. Implement minimum code to pass
 3. Refactor for quality
-4. Update relevant documentation
+4. Update documentation
 5. Create ADR if architecturally significant
 
 ### Fixing a Bug
 1. Write a test that reproduces the bug
 2. Fix the bug
 3. Verify test passes
-4. Check for similar issues elsewhere
+4. Check for similar issues
 
 ### Investigating Unknowns
-Follow the [Research Workflow](claude-docs/research-workflow.md):
 1. Check existing documentation
 2. Search codebase for patterns
 3. Use Serena for semantic navigation
-4. Document findings in Serena memories
+4. Document findings
 
 ## Commit Guidelines
 
@@ -130,10 +206,11 @@ Follow the [Research Workflow](claude-docs/research-workflow.md):
 
 ## Project-Specific Notes
 
-<!-- USER_SECTION_START: Project Notes -->
-Add any project-specific information here:
-- Known issues
-- Areas needing special care
-- External dependencies
-- Team conventions
-<!-- USER_SECTION_END -->
+<!-- PROJECT_NOTES_START -->
+<!-- Add project-specific information here:
+     - Known issues or technical debt
+     - Areas needing special care
+     - External dependencies
+     - Deployment considerations
+-->
+<!-- PROJECT_NOTES_END -->

@@ -1,6 +1,6 @@
 # Procedure: Install Specialized Agents
 
-Guide the user through installing specialized Claude Code agents.
+Inform the user about specialized Claude Code agents (non-blocking).
 
 ## What Are Agents?
 
@@ -17,13 +17,21 @@ This repository contains 85+ specialized agents organized by category including:
 - DevOps & Deployment
 - Security & Code Review
 
+## Important: Non-Blocking Step
+
+**Agent installation is OPTIONAL and should NOT block the bootstrap process.**
+
+Agents enhance Claude's capabilities but are not required for the bootstrap to complete successfully. The user can install them at any time - before, during, or after the bootstrap.
+
 ## Steps
 
-### 1. Recommend Agents [INTERACTIVE]
+### 1. Inform About Agents [AUTO]
 
-Based on the project analysis, tell the user:
+Tell the user about agents and continue with bootstrap:
 
-> "I recommend installing specialized agents for your tech stack. These give me deep expertise in areas like architecture review, TDD, debugging, and language-specific patterns.
+> "**Optional Enhancement: Specialized Agents**
+>
+> I recommend installing specialized agents for your tech stack. These give me deep expertise in areas like architecture review, TDD, debugging, and language-specific patterns.
 >
 > Based on your project ({{primary_language}}), relevant agents include:
 >
@@ -37,44 +45,33 @@ Based on the project analysis, tell the user:
 > - Language-specific expert agent
 > - Framework-specific agents if applicable
 >
-> Would you like to install agents now?"
-
-### 2. Direct to Installation [INTERACTIVE]
-
-If user agrees:
-
-> "To install agents:
->
+> **To install (you can do this anytime):**
 > 1. Visit **https://github.com/wshobson/agents**
 > 2. Follow the installation instructions in their README
-> 3. The repo has detailed setup guides for different environments
 >
-> The repository is actively maintained and has the most current installation method.
->
-> Let me know when you've completed the agent installation, or if you'd like to skip this step and continue with the rest of the bootstrap."
+> I'm continuing with the rest of the bootstrap now. Agents are not required for bootstrap to complete."
 
-### 3. Wait for User [CONFIRM]
-
-Wait for user to confirm they've either:
-- Completed agent installation
-- Want to skip this step
-
-### 4. Record in Manifest [AUTO]
+### 2. Record in Manifest [AUTO]
 
 Update `.claude-bootstrap/manifest.json`:
 ```json
 {
   "agents": {
-    "installed": true | false,
-    "skipped": false | true,
-    "source": "https://github.com/wshobson/agents"
+    "informed": true,
+    "source": "https://github.com/wshobson/agents",
+    "recommended_agents": ["architect-reviewer", "code-reviewer", "tdd-orchestrator", "{{language}}-expert"],
+    "note": "User was informed about agents. Installation is optional and can be done anytime."
   }
 }
 ```
 
+### 3. Continue with Bootstrap [AUTO]
+
+Immediately proceed to the next procedure. Do NOT wait for user to confirm agent installation.
+
 ## Skip Conditions
 
-Skip this procedure if:
+Skip this procedure entirely if:
 - User explicitly asked to skip agents
 - User wants minimal bootstrap only
 
@@ -83,3 +80,41 @@ Skip this procedure if:
 - Agent availability and installation methods may change - always refer to the source repo
 - Users can add custom agents anytime
 - Agents work best with Serena MCP installed for semantic code understanding
+- **This step is informational only - it should never block bootstrap progress**
+
+## If User Asks About Agents Later
+
+If user returns to ask about agents after bootstrap:
+
+1. Check if they've already been informed (check manifest for `agents.informed`)
+2. Provide the same installation instructions
+3. Offer to help troubleshoot if they encounter issues
+
+## Optional: User Verification
+
+If the user voluntarily reports they've installed agents:
+
+Update manifest:
+```json
+{
+  "agents": {
+    "informed": true,
+    "installed": true,
+    "confirmed_at": "2024-01-15T10:50:00Z",
+    "source": "https://github.com/wshobson/agents"
+  }
+}
+```
+
+**Note**: Do NOT prompt or wait for this confirmation. Only record it if user volunteers the information.
+
+## Self-Verification Checklist
+
+Before proceeding to the next step, verify:
+
+- [ ] User was informed about relevant agents for their stack
+- [ ] User was given the repository URL and basic instructions
+- [ ] Manifest updated with `agents.informed: true`
+- [ ] Did NOT wait for user confirmation (this step is non-blocking)
+
+Proceed immediately to the next procedure after informing the user.

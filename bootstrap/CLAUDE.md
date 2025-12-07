@@ -10,6 +10,52 @@ Transform the user's project into an AI-friendly codebase by:
 3. Generating customized CLAUDE.md and supporting docs
 4. Setting up architecture decision records (ADRs)
 
+---
+
+## Behavioral Constraints
+
+### File System Boundaries
+
+**SAFE LIST - You MAY create or modify files in these locations:**
+- `CLAUDE.md` (project root)
+- `claude-docs/` (entire directory)
+- `docs/adrs/` (entire directory)
+- `.serena/` (entire directory)
+- `.claude/` (entire directory)
+- `.claude-bootstrap/` (entire directory)
+
+**NEVER modify files outside this safe list** (source code, package.json, etc.)
+
+### Autopilot Mode
+
+This bootstrap runs in **full autopilot mode**. Execute all steps without waiting for confirmation.
+
+**Defaults for all decisions:**
+- Existing CLAUDE.md → **Merge** (preserve user sections, update generated sections)
+- Existing docs → **Skip** (don't overwrite customized guides)
+- Missing detections → **Use sensible defaults** or leave placeholder
+- Ambiguous language → **Pick the most prominent one** (most files)
+- ADRs → **Always create** the structure
+
+**Only stop for:**
+- Actual errors that prevent continuation
+- File system permission failures
+
+The user can enable Claude's "ask before edits" mode if they want manual control.
+
+---
+
+## Progress Tracking
+
+Progress is tracked in `.claude-bootstrap/manifest.json` for resumption if interrupted.
+
+If resuming an interrupted bootstrap:
+1. Check `.claude-bootstrap/manifest.json` for completed steps
+2. Skip completed steps, resume from where left off
+3. Re-run analysis if project files changed significantly
+
+---
+
 ## Execution Flow
 
 Follow these procedures in order. Each procedure file contains detailed steps.
@@ -42,29 +88,18 @@ Follow these procedures in order. Each procedure file contains detailed steps.
 
 ## Safety Rules
 
-### NEVER do these without explicit permission:
-- Modify source code files (*.cs, *.ts, *.py, etc.)
-- Change git configuration or remotes
-- Install runtime dependencies (NuGet, npm packages in their project)
+**NEVER** (these require explicit user request):
+- Modify source code files
+- Change git configuration
+- Install runtime dependencies in their project
 - Modify CI/CD pipelines
-- Delete any existing files
+- Delete existing files
 
-### ALWAYS safe to do:
+**ALWAYS safe** (do without asking):
 - Read any file for analysis
-- Create new files in: CLAUDE.md, claude-docs/, docs/adrs/, .serena/, .claude/, .claude-bootstrap/
-- Install development tools (Serena MCP, agents)
-
-### ASK before:
-- Overwriting existing CLAUDE.md
-- Modifying existing documentation
-- Creating files in project root
-
-## Interactivity Guidelines
-
-- **After analysis**: Present findings and ask "Should I proceed with this plan?"
-- **Before overwriting**: Ask "I found an existing X. Should I merge, replace, or skip?"
-- **For optional steps**: Ask "Do you want me to set up X? (recommended for your stack)"
-- **On any error**: Explain what happened and offer alternatives
+- Create/modify files in safe list
+- Install Serena MCP globally
+- Inform user about agents (non-blocking)
 
 ## State Management
 

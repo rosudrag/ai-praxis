@@ -43,13 +43,15 @@ Check that CLAUDE.md contains:
 - [ ] Core principles section
 - [ ] No unresolved `{{placeholders}}`
 
+Log any issues found but don't stop for them.
+
 ### 3. Verify Serena (if installed) [AUTO]
 
 If Serena was installed, test it works:
 
 1. Try using Serena's `get_symbols_overview` tool on a source file
 2. If it responds with symbols, Serena is working
-3. If it fails, note the error for troubleshooting
+3. If it fails, note the error but continue
 
 ### 4. Update Manifest [AUTO]
 
@@ -71,9 +73,9 @@ Update `.claude-bootstrap/manifest.json`:
 }
 ```
 
-### 5. Present Summary [CONFIRM]
+### 5. Present Summary [AUTO]
 
-Tell the user:
+Log the final summary:
 
 > "Bootstrap complete! Here's what was set up:
 >
@@ -99,23 +101,21 @@ Tell the user:
 >
 > You may need to restart Claude Code for all changes to take effect."
 
-### 6. Handle Failures [INTERACTIVE]
+### 6. Handle Issues [AUTO]
 
-If any verification fails:
+If verification finds issues:
+1. Log all issues found
+2. Categorize as critical (blocks usage) or non-critical (cosmetic)
+3. For non-critical issues: note them in summary and continue
+4. For critical issues: attempt one automatic fix, then log and continue
 
-> "Some verification checks failed:
-> - [List of failures]
->
-> Would you like me to:
-> 1. Attempt to fix the issues
-> 2. Show troubleshooting steps
-> 3. Continue anyway (not recommended)"
+Do NOT stop bootstrap for verification issues - the user can manually fix problems later.
 
-## Troubleshooting
+## Troubleshooting Reference
 
 ### CLAUDE.md has unresolved placeholders
-- Re-run procedure 03 (generate-claude-md)
 - Check `.claude-bootstrap/analysis.json` exists and has valid data
+- User can manually edit the placeholders
 
 ### Serena not responding
 - Restart Claude Code
@@ -124,15 +124,49 @@ If any verification fails:
 
 ### Missing files
 - Check which procedure failed in manifest
-- Re-run the specific procedure
-- Check file permissions in project directory
+- User can re-run specific procedures manually
 
 ### Manifest is corrupted
 - Delete `.claude-bootstrap/manifest.json`
-- Re-run bootstrap from the beginning
+- Re-run bootstrap if needed
 
 ## Output
 
 - Updates manifest with completion status
-- Reports success/failure to user
+- Logs success/failure summary
 - Provides next steps guidance
+
+## Error Handling
+
+### Cannot Update Manifest
+
+If manifest write fails:
+1. Log the verification results to console
+2. Note that manifest couldn't be updated
+3. Continue - bootstrap is functionally complete
+
+### Verification Finds Issues
+
+For all issues found:
+1. Log the issue clearly
+2. Attempt automatic fix if simple (e.g., missing file that can be regenerated)
+3. Record issue in manifest if possible
+4. Continue with summary
+
+## Self-Verification Checklist
+
+Before marking bootstrap as complete, verify:
+
+**File Existence:**
+- [ ] `CLAUDE.md` exists and is non-empty
+- [ ] `claude-docs/` directory exists
+- [ ] `claude-docs/README.md` exists
+- [ ] `docs/adrs/` exists
+- [ ] `.claude-bootstrap/analysis.json` exists
+- [ ] `.claude-bootstrap/manifest.json` exists
+
+**Final State:**
+- [ ] Manifest has completion timestamp
+- [ ] Summary was logged
+
+Mark bootstrap as complete and provide summary regardless of minor issues.
