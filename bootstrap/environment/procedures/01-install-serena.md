@@ -67,51 +67,69 @@ Once installed, Serena provides these MCP tools for code analysis and memory man
 
 ## Prerequisites
 
-- Node.js installed (check with `node --version`)
-- npm available (check with `npm --version`)
+- Python `uv` package manager (check with `uv --version`)
+- Node.js installed (check with `node --version`) - for language server features
 
 If prerequisites aren't met, log a warning and skip Serena installation.
+
+---
+
+## CRITICAL: MCP Configuration
+
+**DO NOT manually edit configuration files.** Use the `claude mcp` CLI commands.
+
+Serena is a Python-based MCP server installed via `uvx` from GitHub, NOT via npm.
+
+---
 
 ## Steps
 
 ### 1. Check for Existing Serena Setup [AUTO]
 
-Look for `.serena/project.yml` in the project root.
+Check if Serena is already configured:
 
-If found, skip Serena setup and proceed to next procedure.
+```bash
+claude mcp list
+```
 
-### 2. Check Node.js Prerequisites [AUTO]
+If serena shows as "Connected", skip to verification step.
 
-Verify Node.js and npm are available:
+### 2. Check Prerequisites [AUTO]
+
+Verify `uv` is available:
+```bash
+uv --version
+```
+
 - If available: continue with installation
 - If not available: log warning, skip Serena, continue with other bootstrap steps
 
-### 3. Install Serena MCP [AUTO]
+### 3. Configure Serena MCP [AUTO]
 
-Attempt to install Serena:
+**ALWAYS use `claude mcp add-json` for reliable configuration.**
+
+#### On Windows:
 
 ```bash
-npm install -g serena-mcp
+claude mcp add-json serena '{"type":"stdio","command":"cmd","args":["/c","uvx","--from","git+https://github.com/oraios/serena","serena","start-mcp-server","--context","ide-assistant"]}' -s user
 ```
 
-**On failure**: Log the error, record in manifest as skipped, and continue with bootstrap.
+#### On macOS/Linux:
 
-### 4. Configure Claude Code MCP Settings [AUTO]
-
-Create or update `.claude/settings.local.json` to include Serena:
-
-```json
-{
-  "mcpServers": {
-    "serena": {
-      "command": "serena-mcp",
-      "args": ["--project", "."]
-    }
-  }
-}
+```bash
+claude mcp add-json serena '{"type":"stdio","command":"uvx","args":["--from","git+https://github.com/oraios/serena","serena","start-mcp-server","--context","ide-assistant"]}' -s user
 ```
 
-If settings file already exists, merge the serena configuration.
+### 4. Verify Installation [AUTO]
+
+```bash
+claude mcp list
+```
+
+Expected output:
+```
+serena: ... - ✓ Connected
+```
 
 ### 5. Initialize Serena Project [AUTO]
 
@@ -161,33 +179,41 @@ Log what was accomplished:
 
 ## Troubleshooting Reference
 
-**npm install fails:**
-- Node.js version issue (requires 18+)
-- Permission issue (may need admin/sudo)
-- Network connectivity
+**Serena shows "Failed to connect":**
+1. Check configuration: `claude mcp get serena`
+2. Verify `uv` is installed: `uv --version`
+3. Remove and re-add with correct config (see Step 3)
+4. Restart Claude Code
 
-**Serena not recognized in Claude Code:**
-- Restart Claude Code
-- Check `.claude/settings.local.json` syntax
-- Verify serena-mcp is in PATH
+**Wrong configuration location:**
+- MCP is configured in `~/.claude.json`, NOT in `~/.claude/settings.local.json`
+- NEVER manually edit files - use `claude mcp` commands
+
+**Windows-specific: Arguments mangled (e.g., `/c` becomes `C:/`):**
+- Do NOT use `claude mcp add ... -- cmd /c ...`
+- ALWAYS use `claude mcp add-json` with explicit JSON config
 
 **Serena initialization fails:**
 - Project may have no recognizable source files
 - Language may not be supported
 - Try manual configuration if needed
 
+**uvx command not found:**
+- Install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh` (macOS/Linux)
+- Or: `pip install uv` / `pipx install uv`
+
 ## Skip Conditions
 
 Skip this procedure if:
 - User explicitly asked to skip Serena
-- Node.js/npm not available (log and continue)
+- `uv` not available (log and continue)
 - Installation fails after one attempt (log and continue)
 
 ## Error Handling
 
 For all errors in this procedure:
 1. Log the error to console
-2. Record in manifest: `"serena": { "installed": false, "skipped": true, "reason": "{{error_type}}", "error": "{{error_message}}" }`
+2. Record in state file
 3. Continue with next bootstrap procedure
 
 Do NOT stop the bootstrap for Serena failures - it's an optional enhancement.
@@ -196,10 +222,18 @@ Do NOT stop the bootstrap for Serena failures - it's an optional enhancement.
 
 Before proceeding to the next step, verify:
 
-- [ ] Node.js availability checked
-- [ ] Installation attempted OR skip reason recorded
-- [ ] If installed: `.claude/settings.local.json` configured
-- [ ] If installed: `.serena/project.yml` exists
-- [ ] Manifest updated with Serena status
+- [ ] `uv` availability checked
+- [ ] `claude mcp list` shows serena as "Connected"
+- [ ] If project bootstrap: `.serena/project.yml` exists
+- [ ] State file updated with Serena status
 
 Proceed to next step regardless of Serena success/failure.
+
+## CLI Reference
+
+| Command | Purpose |
+|---------|---------|
+| `claude mcp list` | List all configured servers and their status |
+| `claude mcp get serena` | Show detailed config for Serena |
+| `claude mcp add-json serena '<json>' -s user` | Add Serena with explicit JSON |
+| `claude mcp remove serena -s user` | Remove Serena configuration |

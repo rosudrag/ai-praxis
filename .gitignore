@@ -11,3 +11,4 @@ Thumbs.db
 
 # Misc
 *.log
+bootstrap/.state/environment-state.json
