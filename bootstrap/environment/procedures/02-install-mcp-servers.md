@@ -4,7 +4,7 @@ Install essential MCP servers for enhanced AI-assisted development.
 
 ## What Are MCP Servers?
 
-MCP (Model Context Protocol) servers extend Claude's capabilities by providing:
+MCP (Model Context Protocol) servers extend AI assistant capabilities by providing:
 - Access to up-to-date documentation (Context7)
 - Structured reasoning for complex problems (Sequential Thinking)
 - Integration with external tools and services
@@ -49,26 +49,93 @@ If prerequisites aren't met, log a warning and skip MCP server installation.
 
 ---
 
-## CRITICAL: MCP Configuration Location
+## Tool-Specific Installation
 
-**DO NOT manually edit configuration files.** Use the `claude mcp` CLI commands instead.
+MCP server installation varies depending on which AI coding tool you're using. Check the `detected_tool` from the environment state.
 
-### Where MCP Servers Are Configured
+### For Claude Code
 
-MCP servers are stored in `~/.claude.json` under the `mcpServers` key (for user-scoped servers) or under `projects.<project-path>.mcpServers` (for project-scoped servers).
+Use the `claude mcp` CLI commands:
 
-| Scope | Location | Availability |
-|-------|----------|--------------|
-| **user** | `~/.claude.json` → `mcpServers` | All projects |
-| **local** | `~/.claude.json` → `projects.<path>.mcpServers` | Single project only |
-| **project** | `.mcp.json` in project root | Shared via git |
+#### Add Context7:
 
-### WRONG Locations (Do NOT Use)
+```bash
+claude mcp add-json context7 '{"type":"stdio","command":"npx","args":["-y","@upstash/context7-mcp@latest"]}' -s user
+```
 
-These files are NOT read for MCP configuration:
-- `~/.claude/settings.local.json` - Does NOT configure MCP servers
-- `~/.claude/.mcp/user.json` - Legacy/internal, not reliable
-- `~/.claude/settings.json` - For other settings, not MCP
+#### Add Sequential Thinking:
+
+```bash
+claude mcp add-json sequential-thinking '{"type":"stdio","command":"npx","args":["-y","@modelcontextprotocol/server-sequential-thinking"]}' -s user
+```
+
+**Verification:**
+```bash
+claude mcp list
+```
+Expected output shows servers as "Connected":
+```
+context7: npx -y @upstash/context7-mcp@latest - ✓ Connected
+sequential-thinking: npx -y @modelcontextprotocol/server-sequential-thinking - ✓ Connected
+```
+
+### For Cursor
+
+Cursor supports MCP servers through its settings:
+
+1. Open Cursor Settings (Cmd/Ctrl + ,)
+2. Navigate to "Features" → "MCP Servers"
+3. Add servers:
+
+**Context7:**
+- **Name**: `context7`
+- **Command**: `npx`
+- **Args**: `-y`, `@upstash/context7-mcp@latest`
+
+**Sequential Thinking:**
+- **Name**: `sequential-thinking`
+- **Command**: `npx`
+- **Args**: `-y`, `@modelcontextprotocol/server-sequential-thinking`
+
+### For Windsurf
+
+Windsurf supports MCP servers similarly to Cursor:
+
+1. Open Windsurf Settings
+2. Navigate to MCP configuration
+3. Add the same server configurations as Cursor
+
+### For Cline (VS Code Extension)
+
+1. Open VS Code Settings (Cmd/Ctrl + ,)
+2. Search for "Cline MCP"
+3. Add server configurations:
+   ```json
+   {
+     "context7": {
+       "command": "npx",
+       "args": ["-y", "@upstash/context7-mcp@latest"]
+     },
+     "sequential-thinking": {
+       "command": "npx",
+       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+     }
+   }
+   ```
+
+### For Other Tools
+
+Provide manual configuration guidance:
+
+**Context7:**
+- Command: `npx -y @upstash/context7-mcp@latest`
+- Type: stdio
+
+**Sequential Thinking:**
+- Command: `npx -y @modelcontextprotocol/server-sequential-thinking`
+- Type: stdio
+
+Refer to your tool's documentation for MCP server configuration.
 
 ---
 
@@ -76,11 +143,14 @@ These files are NOT read for MCP configuration:
 
 ### 1. Check for Existing MCP Configuration [AUTO]
 
-Use the CLI to check existing servers:
+Check if servers are already configured (method varies by tool):
 
+**For Claude Code:**
 ```bash
 claude mcp list
 ```
+
+**For other tools:** Check if the tools are available by testing their functionality.
 
 If context7 and/or sequential-thinking are already configured and connected, skip to verification step.
 
@@ -92,33 +162,13 @@ Verify Node.js 18+ and npm are available:
 
 ### 3. Configure MCP Servers [AUTO]
 
-**ALWAYS use `claude mcp add-json` for reliable configuration.**
-
-The `claude mcp add` command with `--` separator can mangle arguments (especially on Windows where `/c` flags get misinterpreted).
-
-#### Add Context7 (user scope - available in all projects):
-
-```bash
-claude mcp add-json context7 '{"type":"stdio","command":"npx","args":["-y","@upstash/context7-mcp@latest"]}' -s user
-```
-
-#### Add Sequential Thinking (user scope):
-
-```bash
-claude mcp add-json sequential-thinking '{"type":"stdio","command":"npx","args":["-y","@modelcontextprotocol/server-sequential-thinking"]}' -s user
-```
+Based on the detected tool, follow the appropriate installation method from the Tool-Specific Installation section above.
 
 ### 4. Verify Installation [AUTO]
 
-```bash
-claude mcp list
-```
-
-Expected output shows all servers as "Connected":
-```
-context7: npx -y @upstash/context7-mcp@latest - ✓ Connected
-sequential-thinking: npx -y @modelcontextprotocol/server-sequential-thinking - ✓ Connected
-```
+Confirm servers are working:
+- For Claude Code: `claude mcp list` shows Connected status
+- For other tools: Test by using the tools if available
 
 ### 5. Log Installation Status [AUTO]
 
@@ -134,7 +184,7 @@ Log what was accomplished:
 > - Automatically used for complex multi-step problems
 > - Helps with planning, debugging, and analysis tasks
 >
-> Note: Claude Code restart may be needed for MCP server recognition."
+> Note: Your AI coding tool may need a restart for MCP server recognition."
 
 ## MCP Server Reference
 
@@ -160,7 +210,7 @@ Once installed, these MCP servers provide the following capabilities:
 Skip this procedure if:
 - User explicitly asked to skip MCP servers
 - Node.js/npm not available (log and continue)
-- Both servers already configured (check with `claude mcp list`)
+- Both servers already configured
 
 ## Error Handling
 
@@ -176,7 +226,6 @@ Do NOT stop the bootstrap for MCP server failures - they are optional enhancemen
 Before proceeding to the next step, verify:
 
 - [ ] Node.js availability checked
-- [ ] `claude mcp list` shows servers as "Connected"
 - [ ] Context7 server configured
 - [ ] Sequential Thinking server configured
 - [ ] State file updated with MCP servers status
@@ -186,22 +235,14 @@ Proceed to next step regardless of MCP server success/failure.
 ## Troubleshooting Reference
 
 **MCP servers show "Failed to connect":**
-1. Check the server configuration: `claude mcp get <server-name>`
+1. Check your tool's MCP configuration
 2. Verify the command and args are correct
-3. Remove and re-add: `claude mcp remove <name> -s user` then `claude mcp add-json ...`
-4. Restart Claude Code
+3. Restart your AI coding tool
 
-**Wrong configuration location:**
-- MCP is configured in `~/.claude.json`, NOT in `~/.claude/settings.local.json`
-- Use `claude mcp` commands, never manually edit files
-
-**Windows-specific: Arguments mangled (e.g., `/c` becomes `C:/`):**
-- Do NOT use `claude mcp add ... -- cmd /c ...`
-- ALWAYS use `claude mcp add-json` with explicit JSON config
-- For Windows commands needing `cmd /c`, use:
-  ```bash
-  claude mcp add-json myserver '{"type":"stdio","command":"cmd","args":["/c","your","command","here"]}' -s user
-  ```
+**npx command fails:**
+- Check internet connectivity
+- npm cache may need clearing: `npm cache clean --force`
+- Try installing packages directly
 
 **Context7 not working:**
 - Ensure you include "use context7" in prompts
@@ -211,19 +252,4 @@ Proceed to next step regardless of MCP server success/failure.
 **Sequential Thinking not activating:**
 - Tool is used automatically for complex reasoning
 - Can be explicitly invoked for structured problem-solving
-- Check `claude mcp list` for connection status
-
-**npx command fails:**
-- Check internet connectivity
-- npm cache may need clearing: `npm cache clean --force`
-- Try installing packages directly: `npm install -g @upstash/context7-mcp`
-
-## CLI Reference
-
-| Command | Purpose |
-|---------|---------|
-| `claude mcp list` | List all configured servers and their status |
-| `claude mcp get <name>` | Show detailed config for a server |
-| `claude mcp add-json <name> '<json>' -s <scope>` | Add server with explicit JSON (recommended) |
-| `claude mcp remove <name> -s <scope>` | Remove a server |
-| `claude mcp reset-project-choices` | Reset approval choices for project-scoped servers |
+- Check configuration status

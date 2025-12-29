@@ -4,7 +4,7 @@ Install and configure Serena MCP for semantic code understanding.
 
 ## What is Serena?
 
-Serena is an MCP (Model Context Protocol) server that gives Claude semantic understanding of code:
+Serena is an MCP (Model Context Protocol) server that gives AI assistants semantic understanding of code:
 - Find symbols by name across the codebase
 - Understand relationships between classes/functions
 - Navigate code intelligently (not just text search)
@@ -74,39 +74,13 @@ If prerequisites aren't met, log a warning and skip Serena installation.
 
 ---
 
-## CRITICAL: MCP Configuration
+## Tool-Specific Installation
 
-**DO NOT manually edit configuration files.** Use the `claude mcp` CLI commands.
+Serena installation varies depending on which AI coding tool you're using. Check the `detected_tool` from the environment state.
 
-Serena is a Python-based MCP server installed via `uvx` from GitHub, NOT via npm.
+### For Claude Code
 
----
-
-## Steps
-
-### 1. Check for Existing Serena Setup [AUTO]
-
-Check if Serena is already configured:
-
-```bash
-claude mcp list
-```
-
-If serena shows as "Connected", skip to verification step.
-
-### 2. Check Prerequisites [AUTO]
-
-Verify `uv` is available:
-```bash
-uv --version
-```
-
-- If available: continue with installation
-- If not available: log warning, skip Serena, continue with other bootstrap steps
-
-### 3. Configure Serena MCP [AUTO]
-
-**ALWAYS use `claude mcp add-json` for reliable configuration.**
+Use the `claude mcp` CLI commands:
 
 #### On Windows:
 
@@ -120,16 +94,93 @@ claude mcp add-json serena '{"type":"stdio","command":"cmd","args":["/c","uvx","
 claude mcp add-json serena '{"type":"stdio","command":"uvx","args":["--from","git+https://github.com/oraios/serena","serena","start-mcp-server","--context","ide-assistant"]}' -s user
 ```
 
-### 4. Verify Installation [AUTO]
+**Verification:**
+```bash
+claude mcp list
+```
+Expected: `serena: ... - ✓ Connected`
 
+### For Cursor
+
+Cursor supports MCP servers through its settings:
+
+1. Open Cursor Settings (Cmd/Ctrl + ,)
+2. Navigate to "Features" → "MCP Servers"
+3. Click "Add Server"
+4. Configure manually with:
+   - **Name**: `serena`
+   - **Command**: `uvx`
+   - **Args**: `--from`, `git+https://github.com/oraios/serena`, `serena`, `start-mcp-server`, `--context`, `ide-assistant`
+
+Or edit the MCP configuration file directly (location varies by OS).
+
+### For Windsurf
+
+Windsurf supports MCP servers similarly to Cursor:
+
+1. Open Windsurf Settings
+2. Navigate to MCP configuration
+3. Add Serena server with the same configuration as Cursor
+
+### For Cline (VS Code Extension)
+
+1. Open VS Code Settings (Cmd/Ctrl + ,)
+2. Search for "Cline MCP"
+3. Add server configuration:
+   ```json
+   {
+     "serena": {
+       "command": "uvx",
+       "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "ide-assistant"]
+     }
+   }
+   ```
+
+### For Other Tools
+
+Provide manual configuration guidance:
+
+1. Serena is an MCP server that runs via `uvx`
+2. The command to start it: `uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context ide-assistant`
+3. Configure your tool's MCP settings to use this command
+4. Refer to your tool's documentation for MCP server configuration
+
+---
+
+## Steps
+
+### 1. Check for Existing Serena Setup [AUTO]
+
+Check if Serena is already configured (method varies by tool):
+
+**For Claude Code:**
 ```bash
 claude mcp list
 ```
 
-Expected output:
+**For other tools:** Check if Serena tools are available (try calling `mcp__serena__initial_instructions`).
+
+If Serena shows as connected/working, skip to verification step.
+
+### 2. Check Prerequisites [AUTO]
+
+Verify `uv` is available:
+```bash
+uv --version
 ```
-serena: ... - ✓ Connected
-```
+
+- If available: continue with installation
+- If not available: log warning, skip Serena, continue with other bootstrap steps
+
+### 3. Configure Serena MCP [AUTO]
+
+Based on the detected tool, follow the appropriate installation method from the Tool-Specific Installation section above.
+
+### 4. Verify Installation [AUTO]
+
+Try using a Serena tool to confirm it's working:
+- Call `mcp__serena__initial_instructions` to test connectivity
+- If it responds, Serena is working
 
 ### 5. Initialize Serena Project [AUTO]
 
@@ -148,7 +199,7 @@ After Serena initializes, create a bootstrap memory using Serena's memory tools:
 ```markdown
 # Bootstrap Information
 
-Bootstrapped on {{date}} using Claude Praxis.
+Bootstrapped on {{date}} using AI Praxis.
 
 ## Project Analysis Results
 - **Project Type**: {{project_type}}
@@ -156,12 +207,12 @@ Bootstrapped on {{date}} using Claude Praxis.
 - **Frameworks**: {{frameworks}}
 
 ## Guardrails Installed
-- CLAUDE.md with project instructions
-- claude-docs/ with guides (TDD, code quality, research workflow)
+- AGENTS.md with project instructions
+- ai-docs/ with guides (TDD, code quality, research workflow)
 - ADR structure at docs/adrs/
 
 ## Next Steps
-- Review and customize CLAUDE.md
+- Review and customize AGENTS.md
 - Add project-specific knowledge to memories
 - Create ADRs for existing architectural decisions
 ```
@@ -175,23 +226,15 @@ Log what was accomplished:
 > - `.serena/memories/` - Persistent knowledge store
 > - Semantic code navigation capabilities
 >
-> Note: Claude Code restart may be needed for MCP server recognition."
+> Note: Your AI coding tool may need a restart for MCP server recognition."
 
 ## Troubleshooting Reference
 
 **Serena shows "Failed to connect":**
-1. Check configuration: `claude mcp get serena`
-2. Verify `uv` is installed: `uv --version`
-3. Remove and re-add with correct config (see Step 3)
-4. Restart Claude Code
-
-**Wrong configuration location:**
-- MCP is configured in `~/.claude.json`, NOT in `~/.claude/settings.local.json`
-- NEVER manually edit files - use `claude mcp` commands
-
-**Windows-specific: Arguments mangled (e.g., `/c` becomes `C:/`):**
-- Do NOT use `claude mcp add ... -- cmd /c ...`
-- ALWAYS use `claude mcp add-json` with explicit JSON config
+1. Verify `uv` is installed: `uv --version`
+2. Check your tool's MCP configuration
+3. Restart your AI coding tool
+4. Try reinstalling with the correct configuration
 
 **Serena initialization fails:**
 - Project may have no recognizable source files
@@ -223,17 +266,8 @@ Do NOT stop the bootstrap for Serena failures - it's an optional enhancement.
 Before proceeding to the next step, verify:
 
 - [ ] `uv` availability checked
-- [ ] `claude mcp list` shows serena as "Connected"
+- [ ] Serena is configured in your AI tool
 - [ ] If project bootstrap: `.serena/project.yml` exists
 - [ ] State file updated with Serena status
 
 Proceed to next step regardless of Serena success/failure.
-
-## CLI Reference
-
-| Command | Purpose |
-|---------|---------|
-| `claude mcp list` | List all configured servers and their status |
-| `claude mcp get serena` | Show detailed config for Serena |
-| `claude mcp add-json serena '<json>' -s user` | Add Serena with explicit JSON |
-| `claude mcp remove serena -s user` | Remove Serena configuration |

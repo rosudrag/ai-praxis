@@ -22,9 +22,9 @@ Guardrails provide:
 
 ```
 ┌─────────────────────────────────────────┐
-│             CLAUDE.md                    │ ← Entry point, overview
+│             AGENTS.md                    │ ← Entry point, overview
 ├─────────────────────────────────────────┤
-│           claude-docs/                   │ ← Detailed guides
+│             ai-docs/                     │ ← Detailed guides
 ├─────────────────────────────────────────┤
 │              ADRs                        │ ← Decision history
 ├─────────────────────────────────────────┤
@@ -35,8 +35,8 @@ Guardrails provide:
 ```
 
 Each layer adds depth:
-1. **CLAUDE.md** - Quick reference, links to details
-2. **claude-docs/** - Full guides for complex topics
+1. **AGENTS.md** - Quick reference, links to details (with CLAUDE.md forwarding for Claude Code)
+2. **ai-docs/** - Full guides for complex topics
 3. **ADRs** - Why things are done certain ways
 4. **Memories** - Project-specific discoveries
 5. **Agents** - Specialized expertise on demand
@@ -47,8 +47,8 @@ Each layer adds depth:
 
 Don't dump everything in one file. Layer information:
 
-- **Level 1 (CLAUDE.md)**: What you need 80% of the time
-- **Level 2 (claude-docs/)**: Detailed procedures
+- **Level 1 (AGENTS.md)**: What you need 80% of the time
+- **Level 2 (ai-docs/)**: Detailed procedures
 - **Level 3 (ADRs/Memories)**: Historical context and deep knowledge
 
 AI navigates to deeper levels when needed.
@@ -62,7 +62,7 @@ State things clearly rather than assuming AI will figure it out:
 ✅ "Use the Repository pattern for data access (see ADR-005)"
 
 ❌ "Write clean code"
-✅ "Maximum function length: 30 lines. See claude-docs/code-quality.md"
+✅ "Maximum function length: 30 lines. See ai-docs/code-quality.md"
 ```
 
 ### 3. Examples Over Descriptions
@@ -82,14 +82,14 @@ Every instruction should be actionable:
 
 ```
 ❌ "Consider performance implications"
-✅ "Before adding N+1 queries, check claude-docs/performance.md for batching patterns"
+✅ "Before adding N+1 queries, check ai-docs/performance.md for batching patterns"
 ```
 
 ### 5. Living Documentation
 
 Guardrails evolve with the project:
 
-- Update CLAUDE.md when patterns change
+- Update AGENTS.md when patterns change
 - Add ADRs for new decisions
 - Create memories for discoveries
 - Remove outdated guidance

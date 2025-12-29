@@ -1,13 +1,31 @@
-# Claude Praxis Bootstrap - Entry Point
+# AI Praxis Bootstrap - Entry Point
 
-You are reading this because a user has asked you to bootstrap their project with Claude Praxis.
+You are reading this because a user has asked you to bootstrap their project with AI Praxis.
 
-## Welcome to Claude Praxis
+## Welcome to AI Praxis
 
 This bootstrap has two distinct modes:
 
 1. **Environment Setup** (once per machine): Installs global tools (Serena MCP, Context7, Sequential Thinking, agents)
-2. **Project Bootstrap** (once per project): Sets up project-specific files (CLAUDE.md, docs, ADRs)
+2. **Project Bootstrap** (once per project): Sets up project-specific files (AGENTS.md, docs, ADRs)
+
+---
+
+## Tool Detection
+
+[AUTO] First, detect which AI coding tool is running this bootstrap.
+
+### Detection Methods
+
+1. **Check for Claude Code**: Look for `claude` CLI availability or Claude Code environment
+2. **Check for Cursor**: Look for `.cursor/` directory or Cursor-specific markers
+3. **Check for Windsurf**: Look for `.windsurf/` directory or Windsurf-specific markers
+4. **Check for Cline**: Check if running in VS Code with Cline extension
+
+**If detection is ambiguous**, ask the user:
+> "Which AI coding tool are you using? (Claude Code / Cursor / Windsurf / Cline / Other)"
+
+Store the detected tool for use in environment setup (MCP configuration varies by tool).
 
 ---
 
@@ -18,7 +36,7 @@ This bootstrap has two distinct modes:
 Execute the following checks:
 
 1. **Check environment state**: Look for `.state/environment-state.json` in this bootstrap repo
-2. **Check project state**: Look for `.claude-bootstrap/manifest.json` in the target project
+2. **Check project state**: Look for `.ai-bootstrap/manifest.json` in the target project (also check `.claude-bootstrap/` for legacy)
 3. **Determine recommended mode** based on the decision matrix below
 
 ### Decision Matrix
@@ -55,25 +73,25 @@ Based on detection, present the recommended mode to the user.
 ### Mode: Environment Setup
 
 1. Inform user: "Setting up global environment tools..."
-2. Proceed to [environment/CLAUDE.md](environment/CLAUDE.md)
+2. Proceed to [environment/AGENTS.md](environment/AGENTS.md)
 3. Follow environment setup orchestrator
 
 ### Mode: Project Bootstrap
 
 1. Check if environment setup is complete (read `.state/environment-state.json`)
 2. If environment not ready, warn: "Environment setup not detected. Some features may be unavailable. Continue anyway?"
-3. Proceed to [project/CLAUDE.md](project/CLAUDE.md)
+3. Proceed to [project/AGENTS.md](project/AGENTS.md)
 4. Follow project bootstrap orchestrator
 
 ### Mode: Both
 
 1. Inform user: "Running full bootstrap (environment + project)..."
 2. Execute environment setup first:
-   - Proceed to [environment/CLAUDE.md](environment/CLAUDE.md)
+   - Proceed to [environment/AGENTS.md](environment/AGENTS.md)
    - Wait for completion (blocking)
    - Check environment state
 3. Execute project bootstrap:
-   - Proceed to [project/CLAUDE.md](project/CLAUDE.md)
+   - Proceed to [project/AGENTS.md](project/AGENTS.md)
    - Uses environment state from previous phase
    - Enables optimizations if Serena available
 4. Present combined summary report
@@ -81,10 +99,10 @@ Based on detection, present the recommended mode to the user.
 ### Mode: Verify
 
 1. Read `.state/environment-state.json` (if exists)
-2. Read `.claude-bootstrap/manifest.json` in target project (if exists)
+2. Read `.ai-bootstrap/manifest.json` in target project (if exists)
 3. Test connectivity:
    - Try using Serena tools (if state says installed)
-   - Check `.claude/settings.local.json` for MCP servers
+   - Check MCP server configuration (location varies by tool)
 4. Display status report:
    ```
    Environment Status:
@@ -93,8 +111,8 @@ Based on detection, present the recommended mode to the user.
    ✓ Sequential Thinking MCP (configured)
 
    Project Status:
-   ✓ CLAUDE.md (exists)
-   ✓ claude-docs/ (6 files)
+   ✓ AGENTS.md (exists)
+   ✓ ai-docs/ (6 files)
    ✓ docs/adrs/ (initialized)
    ✓ .serena/ (configured)
 
@@ -108,16 +126,16 @@ Based on detection, present the recommended mode to the user.
 Display explanation of modes:
 
 ```
-Claude Praxis bootstrap has two modes:
+AI Praxis bootstrap has two modes:
 
 **Environment Setup** (once per machine)
 - Installs tools globally (Serena MCP, Context7, Sequential Thinking)
-- Modifies ~/.claude/settings.local.json
+- Modifies your AI tool's MCP configuration
 - Takes ~2 minutes
 - Run when: New machine, or want to update tools
 
 **Project Bootstrap** (once per project)
-- Creates CLAUDE.md and docs for THIS project
+- Creates AGENTS.md and docs for THIS project
 - Modifies only this project directory
 - Takes ~1 minute
 - Run when: New project, or want to update project files
@@ -167,7 +185,7 @@ Example message:
 Please check:
 - You have write permissions
 - Directory is not read-only
-- No file locks on CLAUDE.md
+- No file locks on AGENTS.md
 
 Fix the issue and run again - progress will resume from where it stopped.
 ```
@@ -187,6 +205,7 @@ Schema:
 {
   "environment_setup_version": "1.0.0",
   "completed_at": "2025-12-14T10:30:00Z",
+  "detected_tool": "claude-code|cursor|windsurf|cline|other",
   "components": {
     "serena_mcp": {
       "installed": true,
@@ -209,7 +228,7 @@ Schema:
 
 ### Project State
 
-Location: `.claude-bootstrap/manifest.json` (in target project)
+Location: `.ai-bootstrap/manifest.json` (in target project)
 
 This tracks project-specific bootstrap progress.
 
@@ -219,7 +238,7 @@ Schema:
   "bootstrap_version": "1.0.0",
   "started_at": "2025-12-14T10:35:00Z",
   "completed_at": "2025-12-14T10:37:00Z",
-  "steps_completed": ["analyze", "generate-claude-md", "generate-docs", "setup-adrs"],
+  "steps_completed": ["analyze", "generate-agents-md", "generate-docs", "setup-adrs"],
   "steps_skipped": [],
   "project_type": "TypeScript Application",
   "environment_setup_available": true,
@@ -246,10 +265,11 @@ Schema:
 **Default action for autopilot**: If this is clearly a first-time bootstrap (no environment state, no project state), automatically run "both" mode.
 
 **Execution steps:**
-1. Perform automatic mode detection
-2. Select appropriate mode
-3. Inform user what will happen
-4. Execute the selected mode
-5. Present summary report
+1. Detect which AI coding tool is being used
+2. Perform automatic mode detection
+3. Select appropriate mode
+4. Inform user what will happen
+5. Execute the selected mode
+6. Present summary report
 
-Start by checking for environment and project state, then proceed with the appropriate mode.
+Start by detecting the AI tool, then checking for environment and project state, then proceed with the appropriate mode.

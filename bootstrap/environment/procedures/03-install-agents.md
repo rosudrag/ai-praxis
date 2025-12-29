@@ -53,7 +53,7 @@ Tell the user about agents and continue with bootstrap:
 
 ### 2. Record in Manifest [AUTO]
 
-Update `.claude-bootstrap/manifest.json`:
+Update `.ai-bootstrap/manifest.json`:
 ```json
 {
   "agents": {

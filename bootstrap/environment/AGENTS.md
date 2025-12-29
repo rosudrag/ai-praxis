@@ -1,19 +1,35 @@
 # Environment Setup - Execution Instructions
 
-Install global tools that make Claude Code better for ALL projects.
+Install global tools that make your AI coding assistant better for ALL projects.
 
 **Scope**: This modifies your GLOBAL environment (not a specific project).
 
 **Safe to re-run**: Yes. Existing installations are detected and skipped.
 
 **Files modified**:
-- `~/.claude/settings.local.json` (global MCP server config)
+- MCP server configuration (location varies by tool - see Tool-Specific Configuration)
 - `../.state/environment-state.json` (in bootstrap repo, tracks completion)
 
 **Files NOT touched**:
 - Project source code
 - Project configuration files
-- Project-specific Claude files
+- Project-specific files
+
+---
+
+## Tool-Specific Configuration
+
+MCP servers are configured differently depending on which AI coding tool you're using:
+
+| Tool | MCP Configuration Location | Configuration Method |
+|------|---------------------------|---------------------|
+| **Claude Code** | `~/.claude.json` | `claude mcp add-json` CLI |
+| **Cursor** | Cursor Settings UI | One-click install or manual |
+| **Windsurf** | Windsurf Settings UI | One-click install or manual |
+| **Cline** | VS Code settings | Extension settings UI |
+| **Other** | Varies | Manual JSON configuration |
+
+The detected tool from the entry point determines which configuration method to use.
 
 ---
 
@@ -30,6 +46,7 @@ Expected schema:
 {
   "environment_setup_version": "1.0.0",
   "completed_at": "2025-12-14T10:30:00Z",
+  "detected_tool": "claude-code",
   "components": {
     "serena_mcp": {
       "installed": true,
@@ -97,6 +114,7 @@ After all procedures complete, write/update `../.state/environment-state.json`:
 {
   "environment_setup_version": "1.0.0",
   "completed_at": "2025-12-14T10:30:00Z",
+  "detected_tool": "claude-code|cursor|windsurf|cline|other",
   "components": {
     "serena_mcp": {
       "installed": true|false,
@@ -133,7 +151,7 @@ Environment setup complete!
 ✓ Sequential Thinking MCP - Structured reasoning
 ℹ Agents - See installation guide
 
-Note: Restart Claude Code to activate MCP servers.
+Note: Restart your AI coding tool to activate MCP servers.
 
 Next step: Bootstrap a project with 'project' mode.
 ```
@@ -148,7 +166,7 @@ Environment setup complete (with warnings)!
 ℹ Agents - See installation guide
 
 Note: Some features may be unavailable. You can retry with: "update environment setup"
-Note: Restart Claude Code to activate MCP servers.
+Note: Restart your AI coding tool to activate MCP servers.
 
 Next step: Bootstrap a project with 'project' mode.
 ```
@@ -206,15 +224,15 @@ When user asks to "verify environment" or mode is "verify":
 1. Read state file
 2. For each component marked as installed:
    - **Serena**: Try `mcp__serena__initial_instructions` (test connection)
-   - **Context7/Sequential**: Check `.claude/settings.local.json` has entries
+   - **Context7/Sequential**: Check MCP configuration for entries
    - **Node.js**: Run `node --version`
 3. Report findings:
    ```
    Environment Verification:
 
    ✓ Serena MCP v1.2.3 (working)
-   ✓ Context7 MCP (configured in settings.local.json)
-   ✓ Sequential Thinking MCP (configured in settings.local.json)
+   ✓ Context7 MCP (configured)
+   ✓ Sequential Thinking MCP (configured)
    ℹ Agents (notification shown previously)
    ✓ Node.js v20.11.0
 
@@ -226,7 +244,7 @@ If verification finds issues:
 Environment Verification:
 
 ✗ Serena MCP (configured but not responding)
-  → Try restarting Claude Code
+  → Try restarting your AI coding tool
   → Or reinstall with: "reinstall environment setup"
 ✓ Context7 MCP (configured)
 ✓ Sequential Thinking MCP (configured)

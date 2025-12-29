@@ -14,22 +14,23 @@ Verify all expected files exist:
 
 | File/Directory | Required | Check |
 |----------------|----------|-------|
-| `CLAUDE.md` | Yes | File exists and is readable |
-| `claude-docs/` OR enhanced existing docs | Yes | Directory exists with guides |
+| `AGENTS.md` | Yes | File exists and is readable |
+| `CLAUDE.md` | If Claude Code | Forwarding file with `@AGENTS.md` |
+| `ai-docs/` OR enhanced existing docs | Yes | Directory exists with guides |
 | `docs/adrs/` | Yes | Directory exists |
 | `docs/adrs/0000-adr-template.md` | Yes | Template exists |
-| `.claude-bootstrap/` | Yes | Directory exists |
-| `.claude-bootstrap/analysis.json` | Yes | File exists and valid JSON |
-| `.claude-bootstrap/manifest.json` | Yes | File exists and valid JSON |
+| `.ai-bootstrap/` | Yes | Directory exists |
+| `.ai-bootstrap/analysis.json` | Yes | File exists and valid JSON |
+| `.ai-bootstrap/manifest.json` | Yes | File exists and valid JSON |
 | `.serena/project.yml` | If Serena available | File exists |
 
 **For each missing required file:**
 - Log error: "Missing required file: {{filename}}"
 - Set verification status to FAILED
 
-### 2. CLAUDE.md Validation [AUTO]
+### 2. AGENTS.md Validation [AUTO]
 
-Validate CLAUDE.md content:
+Validate AGENTS.md content:
 
 | Check | Validation |
 |-------|------------|
@@ -40,14 +41,14 @@ Validate CLAUDE.md content:
 | No excessive placeholders | < 5 instances of "{{" or "USER_SECTION" unfilled |
 
 **If validation fails:**
-- Log warning: "CLAUDE.md may be incomplete or corrupted"
+- Log warning: "AGENTS.md may be incomplete or corrupted"
 - Set verification status to WARNING
 
 ### 3. Documentation Validation [AUTO]
 
 Validate generated/enhanced documentation:
 
-**If claude-docs/ was created:**
+**If ai-docs/ was created:**
 - Check for expected guides:
   - `tdd-enforcement.md` OR `hypothesis-driven-tdd.md`
   - `code-quality.md`
@@ -105,7 +106,7 @@ Verify manifest has all required fields:
   "bootstrap_version": "1.0.0",
   "started_at": "<timestamp>",
   "completed_at": "<timestamp>",
-  "steps_completed": ["analyze", "generate-claude-md", "generate-docs", "setup-adrs"],
+  "steps_completed": ["analyze", "generate-agents-md", "generate-docs", "setup-adrs"],
   "steps_skipped": [],
   "project_type": "<type>",
   "environment_setup_available": true|false,
@@ -135,11 +136,11 @@ Generate and display report:
 ```
 Verification complete - All checks passed!
 
-✓ CLAUDE.md (80 lines)
-✓ claude-docs/ (6 files, 45KB)
+✓ AGENTS.md (80 lines)
+✓ ai-docs/ (6 files, 45KB)
 ✓ docs/adrs/ (structure initialized, template present)
 ✓ .serena/ (configured and responding)
-✓ .claude-bootstrap/ (analysis and manifest valid)
+✓ .ai-bootstrap/ (analysis and manifest valid)
 
 Bootstrap successful! Ready to use.
 ```
@@ -149,11 +150,11 @@ Bootstrap successful! Ready to use.
 ```
 Verification complete - Warnings found
 
-✓ CLAUDE.md (80 lines)
-✓ claude-docs/ (6 files, 45KB)
+✓ AGENTS.md (80 lines)
+✓ ai-docs/ (6 files, 45KB)
 ✓ docs/adrs/ (structure initialized)
-⚠ .serena/ (not responding - try restarting Claude Code)
-✓ .claude-bootstrap/ (analysis and manifest valid)
+⚠ .serena/ (not responding - try restarting your AI tool)
+✓ .ai-bootstrap/ (analysis and manifest valid)
 
 Bootstrap completed with warnings. See above for details.
 ```
@@ -163,10 +164,10 @@ Bootstrap completed with warnings. See above for details.
 ```
 Verification failed - Critical issues found
 
-✗ CLAUDE.md (missing or corrupted)
-✓ claude-docs/ (6 files)
+✗ AGENTS.md (missing or corrupted)
+✓ ai-docs/ (6 files)
 ✗ docs/adrs/ (structure incomplete)
-✓ .claude-bootstrap/ (analysis valid, manifest corrupted)
+✓ .ai-bootstrap/ (analysis valid, manifest corrupted)
 
 Please review errors above and retry bootstrap.
 ```
@@ -195,15 +196,15 @@ Command: "bootstrap this project"
 
 ### Serena Not Responding
 ```
-Recommendation: Restart Claude Code
+Recommendation: Restart your AI coding tool
 If still not working: "verify environment setup"
 ```
 
 ### Corrupted Manifest
 ```
-Recommendation: Delete .claude-bootstrap/ and re-run
+Recommendation: Delete .ai-bootstrap/ and re-run
 Commands:
-1. Delete .claude-bootstrap/ directory
+1. Delete .ai-bootstrap/ directory
 2. "bootstrap this project"
 ```
 
@@ -230,7 +231,7 @@ This verification runs automatically:
 Before completing this procedure:
 
 - [ ] All file existence checks performed
-- [ ] CLAUDE.md validated
+- [ ] AGENTS.md validated
 - [ ] Documentation validated
 - [ ] ADR structure validated
 - [ ] Serena connectivity tested (if applicable)

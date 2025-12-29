@@ -1,17 +1,18 @@
 # Project Bootstrap - Execution Instructions
 
-Set up Claude Praxis methodology files for THIS project.
+Set up AI Praxis methodology files for THIS project.
 
 **Scope**: This creates/modifies files in the TARGET project (not globally).
 
 **Safe to re-run**: Yes. Existing customizations are preserved.
 
 **Files created/modified**:
-- `CLAUDE.md` (project root)
-- `claude-docs/` or enhance existing docs directory
+- `AGENTS.md` (project root) - main instructions file
+- `CLAUDE.md` (project root) - forwarding file for Claude Code users
+- `ai-docs/` or enhance existing docs directory
 - `docs/adrs/` (if not exists)
 - `.serena/project.yml` (if Serena installed)
-- `.claude-bootstrap/` (bootstrap metadata)
+- `.ai-bootstrap/` (bootstrap metadata)
 
 **Files NOT touched**:
 - Source code
@@ -55,7 +56,7 @@ Read `../.state/environment-state.json` from the bootstrap repo:
 
 ### 2. Check Project Bootstrap State [AUTO]
 
-Read `.claude-bootstrap/manifest.json` in target project:
+Read `.ai-bootstrap/manifest.json` in target project (also check legacy `.claude-bootstrap/`):
 
 **If exists and complete:**
 - Project was already bootstrapped
@@ -80,7 +81,7 @@ Verify the project is valid for bootstrapping:
 |-------|-------------|----------------|
 | Has recognizable structure | At least one source file or config | "No project structure detected" |
 | Not the bootstrap repo itself | CWD != bootstrap repo path | "Cannot bootstrap the bootstrap repo" |
-| Write permissions | Can create `.claude-bootstrap/` | "No write permissions" |
+| Write permissions | Can create `.ai-bootstrap/` | "No write permissions" |
 
 If any check fails, stop and report error with recovery steps.
 
@@ -97,7 +98,7 @@ Execute [procedures/00-analyze-project.md](procedures/00-analyze-project.md)
 **Key behavior:**
 - If environment state shows Serena is installed → Use Serena tools for analysis
 - If Serena not installed → Use file-based fallback methods
-- Save results to `.claude-bootstrap/analysis.json`
+- Save results to `.ai-bootstrap/analysis.json`
 - Record in manifest: `steps_completed: ["analyze"]`
 
 **Expected output:**
@@ -106,20 +107,22 @@ Execute [procedures/00-analyze-project.md](procedures/00-analyze-project.md)
 - Documentation inventory completed
 - Analysis results persisted
 
-### 2. Generate CLAUDE.md [AUTO]
+### 2. Generate AGENTS.md [AUTO]
 
-Execute [procedures/01-generate-claude-md.md](procedures/01-generate-claude-md.md)
+Execute [procedures/01-generate-agents-md.md](procedures/01-generate-agents-md.md)
 
 **Key behavior:**
-- Read analysis results from `.claude-bootstrap/analysis.json`
-- Use template at `../templates/CLAUDE.md.template`
-- If CLAUDE.md exists: merge (preserve USER_SECTION content)
-- If CLAUDE.md missing: create new from template
+- Read analysis results from `.ai-bootstrap/analysis.json`
+- Use template at `../templates/AGENTS.md.template`
+- If AGENTS.md exists: merge (preserve USER_SECTION content)
+- If AGENTS.md missing: create new from template
 - Fill in discovered values (commands, paths, purpose)
-- Record in manifest: `steps_completed: ["analyze", "generate-claude-md"]`
+- **Also create CLAUDE.md** as a forwarding file for Claude Code users
+- Record in manifest: `steps_completed: ["analyze", "generate-agents-md"]`
 
 **Expected output:**
-- `CLAUDE.md` created or updated
+- `AGENTS.md` created or updated (main instructions)
+- `CLAUDE.md` created (forwards to AGENTS.md for Claude Code compatibility)
 - Discovered values filled in (no placeholders if possible)
 - User sections preserved (if updating)
 
@@ -130,14 +133,14 @@ Execute [procedures/02-generate-docs.md](procedures/02-generate-docs.md)
 **Key behavior:**
 - Read documentation inventory from analysis
 - **Decision based on existing docs:**
-  - If excellent/good docs exist → Enhance existing guides, DON'T create claude-docs/
-  - If basic/missing docs → Create claude-docs/ with Praxis guides
+  - If excellent/good docs exist → Enhance existing guides, DON'T create ai-docs/
+  - If basic/missing docs → Create ai-docs/ with Praxis guides
 - Use templates from `../templates/guides/`
 - Customize guides based on project patterns (from analysis)
-- Record in manifest: `steps_completed: ["analyze", "generate-claude-md", "generate-docs"]`
+- Record in manifest: `steps_completed: ["analyze", "generate-agents-md", "generate-docs"]`
 
 **Expected output:**
-- Either `claude-docs/` created with guides
+- Either `ai-docs/` created with guides
 - Or existing docs enhanced with missing guides
 - Guides customized for project's stack and patterns
 
@@ -150,7 +153,7 @@ Execute [procedures/03-setup-adrs.md](procedures/03-setup-adrs.md)
 - If not, create `docs/adrs/` structure
 - Create ADR template
 - Create initial ADR if none exist
-- Record in manifest: `steps_completed: ["analyze", "generate-claude-md", "generate-docs", "setup-adrs"]`
+- Record in manifest: `steps_completed: ["analyze", "generate-agents-md", "generate-docs", "setup-adrs"]`
 
 **Expected output:**
 - `docs/adrs/` directory structure
@@ -173,14 +176,14 @@ Execute [procedures/03-setup-adrs.md](procedures/03-setup-adrs.md)
 
 ### 6. Save Manifest [AUTO]
 
-Write `.claude-bootstrap/manifest.json` with completion status:
+Write `.ai-bootstrap/manifest.json` with completion status:
 
 ```json
 {
   "bootstrap_version": "1.0.0",
   "started_at": "2025-12-14T10:35:00Z",
   "completed_at": "2025-12-14T10:37:00Z",
-  "steps_completed": ["analyze", "generate-claude-md", "generate-docs", "setup-adrs"],
+  "steps_completed": ["analyze", "generate-agents-md", "generate-docs", "setup-adrs"],
   "steps_skipped": [],
   "project_type": "TypeScript Application",
   "environment_setup_available": true,
@@ -194,7 +197,8 @@ Execute [verification.md](verification.md):
 
 **Checks:**
 - All expected files exist
-- CLAUDE.md has valid syntax
+- AGENTS.md has valid syntax
+- CLAUDE.md forwards correctly
 - Guides were created/updated
 - ADR structure is valid
 - Serena connectivity (if available)
@@ -202,8 +206,9 @@ Execute [verification.md](verification.md):
 **Report:**
 ```
 Verification complete:
-✓ CLAUDE.md (80 lines)
-✓ claude-docs/ (6 files)
+✓ AGENTS.md (80 lines)
+✓ CLAUDE.md (forwarding file)
+✓ ai-docs/ (6 files)
 ✓ docs/adrs/ (structure initialized)
 ✓ .serena/ (configured and working)
 
@@ -217,29 +222,31 @@ Display summary:
 ```
 Project bootstrap complete!
 
-✓ CLAUDE.md - Project instructions (80 lines)
-✓ claude-docs/ - Methodology guides (6 files)
+✓ AGENTS.md - Project instructions (80 lines)
+✓ CLAUDE.md - Forwarding file for Claude Code
+✓ ai-docs/ - Methodology guides (6 files)
   - tdd-enforcement.md
   - code-quality.md
   - iterative-problem-solving.md
   - security.md
   - research-workflow.md
-  - hypothesis-driven-tdd.md
+  - multi-approach-validation.md
 ✓ docs/adrs/ - Architecture decision records
 ✓ .serena/ - Semantic code navigation
 
 Next steps:
-1. Review and customize CLAUDE.md
+1. Review and customize AGENTS.md
 2. Create your first ADR for existing decisions
-3. Try asking Claude about your codebase
+3. Try asking your AI assistant about your codebase
 ```
 
 If Serena was not available:
 ```
 Project bootstrap complete!
 
-✓ CLAUDE.md - Project instructions (80 lines)
-✓ claude-docs/ - Methodology guides (6 files)
+✓ AGENTS.md - Project instructions (80 lines)
+✓ CLAUDE.md - Forwarding file for Claude Code
+✓ ai-docs/ - Methodology guides (6 files)
 ✓ docs/adrs/ - Architecture decision records
 ⊗ .serena/ - Not configured (Serena not installed)
 
@@ -247,7 +254,7 @@ Note: Some optimizations unavailable (Serena not installed).
 To enable Serena, run: "setup environment"
 
 Next steps:
-1. Review and customize CLAUDE.md
+1. Review and customize AGENTS.md
 2. Create your first ADR for existing decisions
 3. Start using the methodology guides
 ```
@@ -273,7 +280,7 @@ Project bootstrap errors are blocking (stop and report):
 Please check:
 - You have write permissions for this directory
 - Directory is not read-only
-- No file locks on CLAUDE.md
+- No file locks on AGENTS.md
 
 Fix the issue and run again - progress will resume from where it stopped.
 ```
@@ -308,16 +315,17 @@ When re-running bootstrap on existing project:
 
 ### Update Behavior
 
-1. **CLAUDE.md**: Merge new template sections, preserve USER_SECTION content
-2. **Guides**: Only create missing guides, don't overwrite existing ones
-3. **ADRs**: Don't touch existing ADRs, ensure structure exists
-4. **Analysis**: Re-run to detect changes
-5. **Manifest**: Update completion timestamp, add any new steps
+1. **AGENTS.md**: Merge new template sections, preserve USER_SECTION content
+2. **CLAUDE.md**: Regenerate forwarding file
+3. **Guides**: Only create missing guides, don't overwrite existing ones
+4. **ADRs**: Don't touch existing ADRs, ensure structure exists
+5. **Analysis**: Re-run to detect changes
+6. **Manifest**: Update completion timestamp, add any new steps
 
 ### User Confirmation (Autopilot Override)
 
 In autopilot mode, updating is automatic with these safe defaults:
-- Merge CLAUDE.md (preserve user content)
+- Merge AGENTS.md (preserve user content)
 - Skip existing guides
 - Add only missing components
 
@@ -341,7 +349,7 @@ Resuming interrupted bootstrap...
 
 Already completed:
 ✓ Project analysis
-✓ CLAUDE.md generation
+✓ AGENTS.md generation
 
 Continuing with:
 → Documentation generation
@@ -374,13 +382,13 @@ Project bootstrap adapts based on environment state:
 
 ### Analysis State
 
-Location: `.claude-bootstrap/analysis.json`
+Location: `.ai-bootstrap/analysis.json`
 
 Contains all discovered project information used for template filling.
 
 ### Manifest State
 
-Location: `.claude-bootstrap/manifest.json`
+Location: `.ai-bootstrap/manifest.json`
 
 Tracks bootstrap progress and completion status.
 
@@ -397,7 +405,7 @@ Read to determine available tools, never modified by project bootstrap.
 | Procedure | Location | Purpose | Depends On |
 |-----------|----------|---------|------------|
 | Analyze Project | [procedures/00-analyze-project.md](procedures/00-analyze-project.md) | Discover project info | Serena (optional) |
-| Generate CLAUDE.md | [procedures/01-generate-claude-md.md](procedures/01-generate-claude-md.md) | Create project instructions | Analysis |
+| Generate AGENTS.md | [procedures/01-generate-agents-md.md](procedures/01-generate-agents-md.md) | Create project instructions | Analysis |
 | Generate Docs | [procedures/02-generate-docs.md](procedures/02-generate-docs.md) | Create methodology guides | Analysis |
 | Setup ADRs | [procedures/03-setup-adrs.md](procedures/03-setup-adrs.md) | Initialize ADR structure | None |
 | Verification | [verification.md](verification.md) | Verify installation | All above |

@@ -315,7 +315,7 @@ Serena memories complement other guardrails:
 |---------------|-------------------|
 | Temporary investigation | Serena memory |
 | Architectural decision | ADR |
-| Process/workflow | claude-docs/ guide |
-| Quick reference | CLAUDE.md |
+| Process/workflow | ai-docs/ guide |
+| Quick reference | AGENTS.md |
 
 Use memories for knowledge discovery, ADRs for decisions.

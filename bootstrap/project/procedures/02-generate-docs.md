@@ -4,18 +4,18 @@ Create or enhance AI documentation for the project.
 
 ## Purpose
 
-Projects need detailed guides that CLAUDE.md references. These provide in-depth instructions for specific practices without cluttering the main file.
+Projects need detailed guides that AGENTS.md references. These provide in-depth instructions for specific practices without cluttering the main file.
 
 **⚠️ CRITICAL**: This procedure's behavior depends on the `comparison_to_praxis.recommendation` from analysis.json:
 - `enhance_existing` → Enhance guides in the existing docs location
-- `create_new` → Create `claude-docs/` directory with Praxis guides
+- `create_new` → Create `ai-docs/` directory with Praxis guides
 - `no_changes_needed` → Skip this procedure entirely
 
 ---
 
 ## Pre-Check: Read Analysis Results [AUTO]
 
-Before proceeding, read `.claude-bootstrap/analysis.json` and check:
+Before proceeding, read `.ai-bootstrap/analysis.json` and check:
 
 ```json
 {
@@ -42,10 +42,10 @@ IF recommendation == "no_changes_needed":
 IF recommendation == "enhance_existing":
     → Use existing docs path (e.g., "docs/ai-includes/")
     → Only add/enhance guides listed in gaps_identified
-    → DO NOT create claude-docs/
+    → DO NOT create ai-docs/
 
 IF recommendation == "create_new":
-    → Create claude-docs/ with all Praxis guides
+    → Create ai-docs/ with all Praxis guides
     → Standard procedure below applies
 ```
 
@@ -92,7 +92,7 @@ Check `comparison_to_praxis.gaps_identified`. Common gaps:
    - Replace generic examples with project-specific ones
    - Adjust language/framework references
    - Add cross-references to existing project guides
-3. **Write to existing docs directory** (NOT claude-docs/)
+3. **Write to existing docs directory** (NOT ai-docs/)
 
 ### A4. Update Cross-References [AUTO]
 
@@ -124,7 +124,7 @@ Preserved existing guides:
 ### B1. Create Directory [AUTO]
 
 ```bash
-mkdir -p claude-docs
+mkdir -p ai-docs
 ```
 
 If directory creation fails, log error and skip this procedure.
@@ -137,7 +137,7 @@ For each standard document, check if it already exists:
 
 ### B3. Generate Guides [AUTO if missing]
 
-Create these files in `claude-docs/`:
+Create these files in `ai-docs/`:
 
 | File | Purpose | Template |
 |------|---------|----------|
@@ -152,10 +152,10 @@ Create these files in `claude-docs/`:
 
 ### B4. Create Index [AUTO]
 
-Create `claude-docs/README.md`:
+Create `ai-docs/README.md`:
 
 ```markdown
-# Claude Documentation
+# AI Documentation
 
 Supporting guides for AI-assisted development.
 
@@ -173,13 +173,13 @@ Supporting guides for AI-assisted development.
 
 ## Adding Custom Guides
 
-Add any project-specific guides to this directory and reference them in the root CLAUDE.md.
+Add any project-specific guides to this directory and reference them in the root AGENTS.md.
 ```
 
 ### B5. Log Creation [AUTO]
 
 ```
-Created claude-docs/ with guides:
+Created ai-docs/ with guides:
 - tdd-enforcement.md - CREATED
 - code-quality.md - CREATED
 - security.md - CREATED
@@ -210,7 +210,7 @@ When enhancing existing guides (Path A), follow these principles:
 - **Don't duplicate** content that already exists
 - **Don't change** project-specific terminology or examples
 - **Don't restructure** existing well-organized guides
-- **Don't create claude-docs/** if docs already exist elsewhere
+- **Don't create ai-docs/** if docs already exist elsewhere
 
 ### Example Enhancement: TDD Guide
 
@@ -241,7 +241,7 @@ Preserve existing sections about:
 
 ### Cannot Create Directory (Path B)
 
-If `mkdir -p claude-docs` fails:
+If `mkdir -p ai-docs` fails:
 1. Log error with details
 2. Record in manifest: `"docs": { "skipped": true, "reason": "directory_creation_failed" }`
 3. Continue with next procedure
@@ -250,7 +250,7 @@ If `mkdir -p claude-docs` fails:
 
 If writing to existing docs directory fails:
 1. Log error with details
-2. Try `claude-docs/` as fallback
+2. Try `ai-docs/` as fallback
 3. If fallback fails, record in manifest and continue
 
 ### Template Files Not Found
@@ -270,7 +270,7 @@ If templates are missing:
 - Cross-references updated
 
 **Path B (create_new)**:
-- Creates `claude-docs/` directory
+- Creates `ai-docs/` directory
 - Creates standard guide files
 - Creates README.md index
 
@@ -287,10 +287,10 @@ Before proceeding to the next step, verify based on path taken:
 - [ ] Manifest updated with enhancement details
 
 **Path B (create_new)**:
-- [ ] `claude-docs/` directory exists
+- [ ] `ai-docs/` directory exists
 - [ ] Core guides present: `tdd-enforcement.md`, `code-quality.md`, `security.md`
 - [ ] Problem-solving guides present: `iterative-problem-solving.md`, `multi-approach-validation.md`, `research-workflow.md`
-- [ ] `claude-docs/README.md` exists
+- [ ] `ai-docs/README.md` exists
 - [ ] Manifest updated with docs generation status
 
 Proceed to next step regardless of which path was taken.

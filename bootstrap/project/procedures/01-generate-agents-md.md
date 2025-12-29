@@ -1,10 +1,10 @@
-# Procedure: Generate CLAUDE.md
+# Procedure: Generate AGENTS.md
 
-Create a lean, table-based CLAUDE.md for the user's project.
+Create a lean, table-based AGENTS.md for the user's project, plus a forwarding CLAUDE.md for Claude Code compatibility.
 
 ## Purpose
 
-CLAUDE.md is a **lookup document**, not a manual. Claude scans it to find:
+AGENTS.md is a **lookup document**, not a manual. AI assistants scan it to find:
 - Build/test commands
 - Critical rules that must never be violated
 - Links to detailed guides
@@ -16,7 +16,7 @@ CLAUDE.md is a **lookup document**, not a manual. Claude scans it to find:
 
 ## Pre-Check: Read Analysis Results [AUTO]
 
-Before proceeding, read `.claude-bootstrap/analysis.json` and check:
+Before proceeding, read `.ai-bootstrap/analysis.json` and check:
 
 ```json
 {
@@ -36,22 +36,27 @@ Before proceeding, read `.claude-bootstrap/analysis.json` and check:
 | Recommendation | docs_path |
 |---------------|-----------|
 | `enhance_existing` | Use existing path (e.g., `./docs/ai-includes`) |
-| `create_new` | Use `./claude-docs` |
+| `create_new` | Use `./ai-docs` |
 | `no_changes_needed` | Use existing path |
 
 ---
 
 ## Steps
 
-### 1. Check for Existing CLAUDE.md [AUTO]
+### 1. Check for Existing Files [AUTO]
 
-If `CLAUDE.md` exists:
-- Create backup as `CLAUDE.md.backup`
+**If `AGENTS.md` exists:**
+- Create backup as `AGENTS.md.backup`
 - Read existing content for user customizations
+
+**If `CLAUDE.md` exists (legacy):**
+- Check if it's a forwarding file or full content
+- If full content, migrate it to AGENTS.md format
+- Preserve user customizations
 
 ### 2. Load Template [AUTO]
 
-Read template from [templates/CLAUDE.md.template](../templates/CLAUDE.md.template).
+Read template from [templates/AGENTS.md.template](../templates/AGENTS.md.template).
 
 ### 3. Customize Template [AUTO]
 
@@ -62,7 +67,7 @@ Replace placeholders with values from `analysis.json`:
 | Placeholder | Source | Fallback |
 |-------------|--------|----------|
 | `{{project_name}}` | Directory name or package.json/csproj | Directory name |
-| `{{docs_path}}` | `documentation_inventory.ai_docs_directory.path` or `claude-docs` | `./claude-docs` |
+| `{{docs_path}}` | `documentation_inventory.ai_docs_directory.path` or `ai-docs` | `./ai-docs` |
 | `{{has_adrs}}` | `true` if `docs/adrs/` exists | `false` |
 
 #### Discovery Variables
@@ -87,7 +92,7 @@ Replace placeholders with values from `analysis.json`:
 
 ### 4. Preserve User Customizations [AUTO]
 
-When merging with existing CLAUDE.md, preserve content between:
+When merging with existing AGENTS.md (or legacy CLAUDE.md), preserve content between:
 - `<!-- CUSTOM_RULES_START -->` / `<!-- CUSTOM_RULES_END -->`
 - `<!-- CUSTOM_DOCS_START -->` / `<!-- CUSTOM_DOCS_END -->`
 - `<!-- KEY_PATHS_START -->` / `<!-- KEY_PATHS_END -->`
@@ -96,17 +101,38 @@ When merging with existing CLAUDE.md, preserve content between:
 
 If user has edited these sections, keep their content.
 
-### 5. Write CLAUDE.md [AUTO]
+### 5. Write AGENTS.md [AUTO]
 
-Write generated content to `CLAUDE.md` in project root.
+Write generated content to `AGENTS.md` in project root.
 
-### 6. Log Summary [AUTO]
+### 6. Create CLAUDE.md Forwarding File [AUTO]
+
+Create a `CLAUDE.md` file that forwards to AGENTS.md for Claude Code compatibility:
+
+```markdown
+# {{project_name}} - Claude Code Instructions
+
+> This project uses the standard AGENTS.md convention for AI coding assistant instructions.
+> This file exists for Claude Code compatibility.
+
+@AGENTS.md
+```
+
+This ensures:
+- Claude Code users get proper instructions via the @-mention syntax
+- Other AI tools read AGENTS.md directly
+- Single source of truth (AGENTS.md)
+
+### 7. Log Summary [AUTO]
 
 ```
-Created CLAUDE.md (~XX lines):
+Created AGENTS.md (~XX lines):
 - Commands: build, test [detected/placeholder]
 - Docs path: {{docs_path}}
 - Key paths: X detected
+
+Created CLAUDE.md (forwarding file):
+- Points to AGENTS.md for Claude Code compatibility
 ```
 
 ---
@@ -140,12 +166,25 @@ Generate minimal fallback:
 
 ---
 
+## Migration from Legacy CLAUDE.md
+
+If project has an existing CLAUDE.md with full content (not a forwarding file):
+
+1. Read existing CLAUDE.md content
+2. Extract user customizations from USER_SECTION markers
+3. Create AGENTS.md with template + preserved customizations
+4. Replace CLAUDE.md with forwarding file
+5. Log: "Migrated CLAUDE.md to AGENTS.md (standard convention)"
+
+---
+
 ## Self-Verification Checklist
 
 Before proceeding:
 
-- [ ] CLAUDE.md is ~60-80 lines (not bloated)
+- [ ] AGENTS.md is ~60-80 lines (not bloated)
 - [ ] Uses table format (not prose)
 - [ ] `docs_path` points to correct location
 - [ ] User sections preserved if existed
 - [ ] Backup created if replacing existing file
+- [ ] CLAUDE.md forwarding file created

@@ -41,6 +41,6 @@
     "_comment": "Optional user preferences for future enhancements",
     "skip_agents": false,
     "tech_stacks": ["typescript", "react"],
-    "preferred_docs_location": "claude-docs"
+    "preferred_docs_location": "ai-docs"
   }
 }

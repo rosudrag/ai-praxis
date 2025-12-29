@@ -2,7 +2,7 @@
 
 Gather comprehensive information about the target project to customize the bootstrap.
 
-This procedure goes beyond basic language detection to **discover** project-specific details that allow CLAUDE.md to be generated with minimal user placeholders.
+This procedure goes beyond basic language detection to **discover** project-specific details that allow AGENTS.md to be generated with minimal user placeholders.
 
 ## Overview
 
@@ -18,10 +18,10 @@ This runs in **autopilot mode** - no user confirmation needed. Just execute and 
 
 ### 1. Create Bootstrap Directory [AUTO]
 
-Create the `.claude-bootstrap/` directory to store bootstrap state:
+Create the `.ai-bootstrap/` directory to store bootstrap state:
 
 ```bash
-mkdir -p .claude-bootstrap
+mkdir -p .ai-bootstrap
 ```
 
 ### 2. Detect Primary Language [AUTO]
@@ -78,9 +78,9 @@ Based on language, check for framework indicators:
 ### 5. Check Existing Guardrails [AUTO]
 
 Look for:
-- `CLAUDE.md` - Already has Claude instructions
+- `AGENTS.md` - Already has AI assistant instructions
+- `CLAUDE.md` - Legacy Claude instructions (may need migration)
 - `.serena/` - Already has Serena configured
-- `.claude/` - Already has Claude Code config
 - `docs/adrs/` - Already has ADR structure
 
 ### 5b. Discover Existing Documentation [AUTO] ⚠️ CRITICAL
@@ -95,8 +95,8 @@ Check these locations for existing AI/Claude documentation:
 | `docs/ai-includes/` | Guide organization (common pattern) |
 | `docs/ai/` | Alternative AI docs location |
 | `docs/claude/` | Claude-specific docs |
-| `.claude/docs/` | Claude Code docs location |
-| `claude-docs/` | Standard Praxis location |
+| `ai-docs/` | Standard AI Praxis location |
+| `claude-docs/` | Legacy Praxis location |
 | Root `*.md` files | README sections about AI assistance |
 
 **For each discovered docs directory:**
@@ -127,8 +127,8 @@ Check these locations for existing AI/Claude documentation:
 
 ```json
 "documentation_inventory": {
-  "claude_md": {
-    "path": "CLAUDE.md",
+  "agents_md": {
+    "path": "AGENTS.md",
     "lines": 200,
     "quality": "excellent|good|basic|missing",
     "coverage": ["build_commands", "architecture", "constraints", ...]
@@ -151,7 +151,7 @@ Check these locations for existing AI/Claude documentation:
   }
 },
 "comparison_to_praxis": {
-  "claude_md_quality": "exceeds_template|matches_template|below_template",
+  "agents_md_quality": "exceeds_template|matches_template|below_template",
   "guide_coverage": "exceeds_template|matches_template|below_template",
   "gaps_identified": ["hypothesis_tdd", "security", "iterative_problem_solving"],
   "recommendation": "enhance_existing|create_new|no_changes_needed"
@@ -162,12 +162,12 @@ Check these locations for existing AI/Claude documentation:
 
 | Existing Docs Quality | Recommendation | Action |
 |----------------------|----------------|--------|
-| **Excellent** | `enhance_existing` | DON'T create `claude-docs/`. Enhance existing guides in place. |
-| **Good** | `enhance_existing` | DON'T create `claude-docs/`. Add missing guides to existing location. |
-| **Basic** | `create_new` | Create `claude-docs/` OR enhance existing location (user choice). |
-| **Missing** | `create_new` | Create `claude-docs/` with all Praxis guides. |
+| **Excellent** | `enhance_existing` | DON'T create `ai-docs/`. Enhance existing guides in place. |
+| **Good** | `enhance_existing` | DON'T create `ai-docs/`. Add missing guides to existing location. |
+| **Basic** | `create_new` | Create `ai-docs/` OR enhance existing location (user choice). |
+| **Missing** | `create_new` | Create `ai-docs/` with all Praxis guides. |
 
-**This affects procedure 04-generate-docs.md behavior.**
+**This affects procedure 02-generate-docs.md behavior.**
 
 ---
 
@@ -456,7 +456,7 @@ Store as: `discovery.patterns`
 
 ### 11. Save Analysis Results [AUTO]
 
-Write comprehensive analysis to `.claude-bootstrap/analysis.json`:
+Write comprehensive analysis to `.ai-bootstrap/analysis.json`:
 
 ```json
 {
@@ -474,6 +474,7 @@ Write comprehensive analysis to `.claude-bootstrap/analysis.json`:
     "is_monorepo": false
   },
   "existing_guardrails": {
+    "has_agents_md": false,
     "has_claude_md": false,
     "has_serena": false,
     "has_adrs": false
@@ -588,8 +589,8 @@ Format findings for user review:
 **Recommended Bootstrap**:
 - [ ] Install Serena MCP
 - [ ] Install agents (recommended: typescript, react)
-- [ ] Generate CLAUDE.md
-- [ ] Create claude-docs/
+- [ ] Generate AGENTS.md
+- [ ] Create ai-docs/
 - [ ] Set up ADRs
 ```
 
@@ -609,7 +610,7 @@ Proceeding with bootstrap...
 
 ### 14. Initialize Manifest [AUTO]
 
-Create `.claude-bootstrap/manifest.json`:
+Create `.ai-bootstrap/manifest.json`:
 
 ```json
 {
@@ -680,7 +681,7 @@ Some things are better left for user input:
 ## If This Step Fails
 
 ### Failure: Cannot Create Bootstrap Directory
-**Recovery**: Try `.claude/bootstrap/` instead. If still fails, report error and stop.
+**Recovery**: Try `.ai-praxis/bootstrap/` instead. If still fails, report error and stop.
 
 ### Failure: Language Detection Ambiguous
 **Recovery**: Pick the language with most files. Note in analysis as "auto-selected".
@@ -701,7 +702,7 @@ Some things are better left for user input:
 Before proceeding to the next step, verify:
 
 **Technical Detection:**
-- [ ] `.claude-bootstrap/` directory exists and is writable
+- [ ] `.ai-bootstrap/` directory exists and is writable
 - [ ] Primary language detected or user provided
 - [ ] Language confidence recorded
 - [ ] Frameworks detected (or empty array)
@@ -727,12 +728,12 @@ Proceed immediately to next phase.
 
 ## Output
 
-Analysis results persist in `.claude-bootstrap/analysis.json`.
+Analysis results persist in `.ai-bootstrap/analysis.json`.
 
-Manifest tracks progress in `.claude-bootstrap/manifest.json`.
+Manifest tracks progress in `.ai-bootstrap/manifest.json`.
 
 The discovery section specifically enables:
-- **CLAUDE.md generation** with pre-filled commands and paths
+- **AGENTS.md generation** with pre-filled commands and paths
 - **Accurate project description** without user editing
 - **Correct coding convention guidance** in generated docs
 - **Pattern-aware suggestions** in TDD and quality guides
