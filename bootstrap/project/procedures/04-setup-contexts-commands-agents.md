@@ -94,7 +94,8 @@ From `templates/commands/`, create:
 | `/build-fix` | `build-fix.md` | Fix build errors iteratively |
 | `/refactor-clean` | `refactor-clean.md` | Remove dead code safely |
 | `/test-coverage` | `test-coverage.md` | Analyze and fill test coverage gaps |
-| `/orchestrate` | `orchestrate.md` | Chain agents for complex workflows |
+| `/orchestrate` | `orchestrate.md` | Delegate work to sub-agents, preserve context |
+| `/introspect` | `introspect.md` | Audit past conversations for improvements |
 | `/update-docs` | `update-docs.md` | Sync documentation with code |
 
 ### 2c. Customize Commands [AUTO]
@@ -104,6 +105,9 @@ For each command:
 - Replace `{{build_command}}` with the project's build command
 - Replace `{{lint_command}}` with the project's lint command
 - Replace `{{typecheck_command}}` with the project's type check command
+- Replace `{{transcripts_path}}` with the Claude Code transcripts path (platform-specific, e.g., `~/.claude/projects/<project-hash>/`)
+- Replace `{{commands_path}}` with the commands directory (e.g., `.claude/commands`)
+- Replace `{{memory_path}}` with the memory directory (e.g., `~/.claude/projects/<project-hash>/memory`)
 - Adapt examples to the project's language/framework
 
 ### 2d. Reference in AGENTS.md [AUTO]
@@ -123,7 +127,8 @@ Add a commands section:
 | `/build-fix` | Fix build errors one at a time |
 | `/refactor-clean` | Remove dead code safely |
 | `/test-coverage` | Analyze and fill coverage gaps |
-| `/orchestrate` | Chain agents for complex workflows |
+| `/orchestrate` | Delegate work to sub-agents, preserve context |
+| `/introspect` | Audit past conversations for improvements |
 | `/update-docs` | Sync documentation with code |
 ```
 
@@ -228,7 +233,7 @@ Record completion in `.ai-bootstrap/manifest.json`:
 {
   "steps_completed": [..., "setup-contexts-commands-agents"],
   "contexts_created": ["dev.md", "review.md", "research.md"],
-  "commands_created": ["plan.md", "review.md", "tdd.md", "verify.md", "debug.md", "build-fix.md", "refactor-clean.md", "test-coverage.md", "orchestrate.md", "update-docs.md"],
+  "commands_created": ["plan.md", "review.md", "tdd.md", "verify.md", "debug.md", "build-fix.md", "refactor-clean.md", "test-coverage.md", "orchestrate.md", "introspect.md", "update-docs.md"],
   "agents_created": ["planner.md", "reviewer.md", "tdd-guide.md", "security-reviewer.md", "architect.md", "build-error-resolver.md", "refactor-cleaner.md", "doc-updater.md"],
   "rules_created": ["coding-style.md", "git-workflow.md", "security.md", "testing.md", "delegation.md"],
   "commands_location": ".claude/commands/",

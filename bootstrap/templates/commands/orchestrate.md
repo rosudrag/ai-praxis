@@ -1,6 +1,10 @@
-# /orchestrate - Multi-Agent Workflow
+# /orchestrate - Delegate Work to Sub-Agents
 
-Chain multiple agents in sequence for complex tasks, with handoff documents between each stage.
+You are the **orchestrator**. Your job is to stay thin, preserve context, and delegate all heavy lifting to sub-agents. NEVER do deep file reading, code analysis, or implementation directly — always spawn agents for that.
+
+## Why This Exists
+
+Context window exhaustion is the #1 problem in long sessions. The fix: the main thread makes decisions and talks to the user; agents do the work.
 
 ## Auto-Invocation
 
@@ -12,117 +16,101 @@ This command should be triggered automatically (not just by user request) when:
 
 When these conditions are detected, inform the user you're using orchestrated delegation, then proceed.
 
-## Instructions
+## Core Rules
 
-You are a workflow orchestrator. You coordinate specialized agents in predefined sequences, passing context between them via structured handoff documents.
+1. **You are a project manager, not a developer.** You decide WHAT to do, agents do HOW.
+2. **Never read large files yourself.** If you need to understand code, spawn an Explore agent.
+3. **Never write code yourself.** Spawn a coding agent with precise instructions.
+4. **Run agents in parallel** whenever tasks are independent.
+5. **Summarize agent results in 2-3 sentences** to the user. Don't paste raw output.
+6. **Keep your own messages short.** Your context is precious — protect it.
 
-### Step 1: Select the Workflow
+## Task Decomposition Pattern
 
-If no workflow type is specified, ask the user to choose one:
+When the user gives you a task:
 
-```
-Available workflows:
-  feature        planner → tdd-guide → reviewer → security-reviewer
-  bugfix         (debug inline) → tdd-guide → reviewer
-  refactor       architect → refactor-cleaner → reviewer
-  security-audit security-reviewer → reviewer
-```
+### Step 1: Understand (quick, do this yourself)
+- Read task docs or issue description (small files, OK to read)
+- Check for prior work or related context
+- Clarify with user if needed
 
-### Step 2: Confirm the Sequence
+### Step 2: Plan (brief, do this yourself)
+- Break the task into 2-5 independent work units
+- Identify dependencies between them
+- State the plan to the user in 3-5 bullet points
 
-Present the agent sequence for the chosen workflow and ask the user:
-- Are all agents in this sequence relevant?
-- Should any agents be skipped?
-- Is there additional context each agent needs?
+### Step 3: Execute (DELEGATE EVERYTHING)
 
-Finalize the sequence before proceeding.
+Spawn agents based on work type:
 
-### Step 3: Execute Each Agent
+| Work Type | Agent Pattern |
+|-----------|---------------|
+| **Investigate/research** | `subagent_type: "Explore"` — find files, understand patterns, read code |
+| **Implement feature** | Use the appropriate language-specific pro agent (e.g., `"typescript-pro"`, `"python-pro"`, `"csharp-pro"`) |
+| **Write tests** | `subagent_type: "tdd-orchestrator"` or `"test-automator"` — TDD implementation |
+| **Review code** | `subagent_type: "code-reviewer"` — parallel review agents with different focuses |
+| **Debug/diagnose** | `subagent_type: "debugger"` — investigate failures |
+| **Infrastructure** | `subagent_type: "cloud-architect"` or `"terraform-specialist"` |
+| **Architecture** | Spawn 2-3 `"architect-review"` agents with different perspectives |
+| **Frontend** | `subagent_type: "frontend-developer"` — React, UI, components |
+| **Database** | `subagent_type: "database-optimizer"` or `"sql-pro"` |
 
-Run each agent in order. For every agent in the sequence:
+### Step 4: Synthesize (do this yourself)
+- Collect agent results
+- Make decisions based on findings
+- Present summary to user
+- Update any tracking docs if applicable
 
-1. **Brief the agent** - Provide the task description and any prior handoff documents
-2. **Execute** - Let the agent complete its work fully
-3. **Generate handoff** - Produce a handoff document (format below) capturing the agent's output
-4. **Check for blockers** - If the agent found blocking issues, STOP and present them to the user before continuing
+## Agent Prompt Template
 
-#### Handoff Document Format
-
-After each agent completes, produce:
-
-```
-## Agent Handoff: [from-agent] → [to-agent]
-
-### Context
-[What this agent was asked to do]
-
-### Findings
-[Key results, decisions made, problems found]
-
-### Files Modified
-- [path/to/file] - [what changed]
-
-### Open Questions
-- [Anything the next agent should investigate or decide]
-
-### Recommendations
-- [Suggestions for the next agent or the user]
-```
-
-### Step 4: Aggregate Final Report
-
-After all agents have completed, produce a summary:
+Always give agents FULL context so they can work autonomously:
 
 ```
-## Orchestration Report: [workflow-type]
-
-### Workflow
-[agent-1] → [agent-2] → ... → [agent-n]
-
-### Summary
-[1-2 sentences describing what was accomplished]
-
-### Agents Executed
-1. **[agent-name]** - [what it did, key outcome]
-2. **[agent-name]** - [what it did, key outcome]
-...
-
-### All Files Modified
-- [deduplicated list across all agents]
-
-### Open Issues
-- [any unresolved questions or deferred items]
-
-### Recommendations
-- [aggregated suggestions from all agents]
+Task: <what to do>
+Context: <why this needs doing>
+Project path: <absolute path>
+Branch: <current branch>
+Key files: <list specific files they need>
+Constraints:
+- Follow existing patterns in the codebase
+- <project-specific constraints from AGENTS.md>
+Expected output: <what you need back — be specific>
 ```
 
-### Workflow Details
+## Parallel Patterns
 
-**feature** - Full lifecycle for new functionality:
-1. `planner` - Break down the feature, create implementation plan
-2. `tdd-guide` - Implement via test-driven development
-3. `reviewer` - Code review the implementation
-4. `security-reviewer` - Check for security concerns
+### Investigation + Planning
+```
+Agent 1 (Explore): "Read requirements and extract acceptance criteria"
+Agent 2 (Explore): "Find existing patterns in the codebase for similar features"
+Agent 3 (Explore): "Check for prior work or related implementations"
+```
 
-**bugfix** - Investigate and fix with quality checks:
-1. Debug inline (use /debug methodology, no separate agent)
-2. `tdd-guide` - Add regression tests and verify the fix
-3. `reviewer` - Review the fix for correctness and side effects
+### Implementation
+```
+Agent 1 (language-pro): "Implement handler/component in <path>"
+Agent 2 (tdd-orchestrator): "Write unit tests for <feature>"
+Agent 3 (Explore): "Find infrastructure patterns for similar features"
+```
 
-**refactor** - Restructure code safely:
-1. `architect` - Analyze structure and plan the refactoring
-2. `refactor-cleaner` - Execute the refactoring
-3. `reviewer` - Verify quality and no regressions
+### Review
+```
+Agent 1 (code-reviewer): "Review architecture and layer compliance"
+Agent 2 (code-reviewer): "Review data model and type safety"
+Agent 3 (code-reviewer): "Review test coverage and edge cases"
+```
 
-**security-audit** - Security-focused review:
-1. `security-reviewer` - Deep security analysis
-2. `reviewer` - General code quality review of any fixes applied
+## When NOT to Orchestrate
 
-## Constraints
+- Simple questions ("what branch am I on?") — just answer
+- Single-file reads — just read it
+- Git operations (commit, push, branch) — just do it
+- Quick lookups — use the relevant tool directly
 
-- NEVER skip generating a handoff document between agents
-- NEVER proceed past a blocking issue without user confirmation
-- ALWAYS present the agent sequence for approval before starting
-- ALWAYS produce the final aggregated report, even if agents were skipped
-- If an agent's output reveals the task is unnecessary (e.g., no security issues found), note it and move on rather than fabricating work
+## Anti-Patterns to Avoid
+
+- **Don't read agent output files yourself** — they return results directly
+- **Don't re-do work an agent already did** — trust their output
+- **Don't spawn agents for trivial tasks** — git status doesn't need an agent
+- **Don't keep large code blocks in your own context** — that's the whole point
+- **Don't spawn more than 5 agents at once** — diminishing returns, harder to synthesize
